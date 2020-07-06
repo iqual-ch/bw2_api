@@ -1,0 +1,5 @@
+{
+    "name": "drupal/xcampaign_api",
+    "description": "Provides integration with the xcampaign api library.",
+    "type": "drupal-module"
+}

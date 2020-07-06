@@ -1,0 +1,48 @@
+xcampaign_api.settings:
+  type: config_object
+  label: 'XCampaign API settings'
+  mapping:
+    base_url:
+      type: string
+      label: 'Base url'
+    newsletter:
+      type: string
+      label: 'Newsletter'
+    credential_provider:
+      type: string
+      label: 'Credential provider'
+    credentials:
+      type: sequence
+      label: 'Credentials'
+      sequence:
+        type: xcampaign_api.settings.credentials.[%key]
+
+xcampaign_api.settings.credentials.config:
+  type: mapping
+  label: 'XCampaign API credentials'
+  mapping:
+    username:
+      type: string
+      label: 'Username key'
+    password:
+      type: string
+      label: 'Password key'
+
+xcampaign_api.settings.credentials.key:
+  type: mapping
+  label: 'XCampaign API credentials with Key Module'
+  mapping:
+    username:
+      type: string
+      label: 'Username key'
+    password:
+      type: string
+      label: 'Password key'
+
+xcampaign_api.settings.credentials.multikey:
+  type: mapping
+  label: 'XCampaign API credentials with Key Module (user/password keys)'
+  mapping:
+    user_password:
+      type: string
+      label: 'User/Password key'
