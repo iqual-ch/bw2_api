@@ -256,6 +256,18 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
           "value" => $data['last_name']
         ];
       }
+      if (!empty($data['user_id'])) {
+        $profile_data['profiles'][0]['attributes'][] = [
+          "alias" => "drupal_user_id",
+          "value" => $data['user_id']
+        ];
+      }
+      if (!empty($data['token'])) {
+        $profile_data['profiles'][0]['attributes'][] = [
+          "alias" => "drupal_user_token",
+          "value" => $data['token']
+        ];
+      }
       $request_json = json_encode($profile_data, true);
     }
     elseif ($requestOperation == 'registerProfile') {
@@ -289,6 +301,18 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
         $profile_data['profile']['attributes'][] = [
           "alias" => "krit_150",
           "value" => $data['last_name']
+        ];
+      }
+      if (!empty($data['user_id'])) {
+        $profile_data['profile']['attributes'][] = [
+          "alias" => "drupal_user_id",
+          "value" => $data['user_id']
+        ];
+      }
+      if (!empty($data['token'])) {
+        $profile_data['profile']['attributes'][] = [
+          "alias" => "drupal_user_token",
+          "value" => $data['token']
         ];
       }
       $request_json = json_encode($profile_data, true);
