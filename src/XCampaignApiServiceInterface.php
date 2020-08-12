@@ -41,5 +41,18 @@ interface XCampaignApiServiceInterface {
    */
   public function deleteContact($contact_id);
 
+  /**
+   * @param $email
+   *
+   * @return mixed
+   */
+  public function updateBlacklist($email);
+
+  /**
+   * @param $email
+   *
+   * @return mixed
+   */
+  public function deleteFromBlacklist($email);
 
 }

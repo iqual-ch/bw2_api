@@ -366,6 +366,74 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  public function deleteFromBlacklist($email) {
+    $profile_data = [
+      "profile" => [
+        "attribute" => [
+          "alias" => "email",
+          "value" => $email
+        ]
+      ]
+    ];
+    $request_json = json_encode($profile_data, true);
+    try {
+
+
+    $deleteFromBlacklistResponse = \Drupal::httpClient()->post($this->auth['baseUrl'] . '/rest/deleteFromBlacklist', [
+      'headers' => [
+        'Content-type' => 'application/json',
+        'client' => $this->auth['clientCode'],
+        'user' => $this->auth['userCode']
+      ],
+      'body' => $request_json,
+    ]);
+    } catch (\Exception $e) {}
+    //$this->logErrors($deleteProfileResponse);
+    if ($deleteFromBlacklistResponse->getStatusCode() == '200') {
+      \Drupal::logger('xcampaign_api')->notice('Profile deleted');
+      return TRUE;
+    }
+    else {
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function updateBlacklist($email) {
+    $profile_data = [
+      "profile" => [
+        "attribute" => [
+          "alias" => "email",
+          "value" => $email
+        ]
+      ]
+    ];
+    $request_json = json_encode($profile_data, true);
+    try {
+      $updateBlacklistResponse = \Drupal::httpClient()->post($this->auth['baseUrl'] . '/rest/updateBlacklist', [
+        'headers' => [
+          'Content-type' => 'application/json',
+          'client' => $this->auth['clientCode'],
+          'user' => $this->auth['userCode']
+        ],
+        'body' => $request_json,
+      ]);
+    } catch (\Exception $e) {}
+    //$this->logErrors($deleteProfileResponse);
+    if ($updateBlacklistResponse->getStatusCode() == '200') {
+      \Drupal::logger('xcampaign_api')->notice('Profile deleted');
+      return TRUE;
+    }
+    else {
+      return FALSE;
+    }
+  }
+
+  /**
    * Small helper function to log xcampaign api errors.
    *
    * @param \GuzzleHttp\Psr7\Response $response
