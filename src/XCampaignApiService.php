@@ -113,6 +113,27 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
     if (empty($this->auth)) {
       throw new \Exception("XCampaign API not authorized.");
     }
+    // Check if the user already exists.
+    $request_json = $this->getRequestJson($data, 'getProfile');
+    try {
+      $getProfileResponse = \Drupal::httpClient()->post($this->auth['baseUrl'] . '/rest/getProfiles', [
+        'headers' => [
+          'Content-type' => 'application/json',
+          'client' => $this->auth['clientCode'],
+          'user' => $this->auth['userCode']
+        ],
+        'body' => $request_json,
+      ]);
+      if ($getProfileResponse->getStatusCode() == '200') {
+        $getProfileJson = json_decode($getProfileResponse->getBody(), true);
+        $this->editContact(reset(reset($getProfileJson['profiles'])['attributes'])['value'], $data);
+        return reset(reset($getProfileJson['profiles'])['attributes'])['value'];
+      }
+    }
+    catch (\Exception $exception) {
+
+    }
+
     $data['newsletter'] = !empty($data['preferences']) && in_array($this->auth['newsletter'], $data['preferences']) ? 1 : 0;
     $request_json = $this->getRequestJson($data, 'registerProfile');
     // Create the http request to the xcampaign.
@@ -237,7 +258,7 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
                 "value" => $data['email']
               ],
               [
-                "alias" => "krit_17205",
+                "alias" => "Newsletter",
                 "value" => $data['newsletter']
               ],
             ],
@@ -268,6 +289,18 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
           "value" => $data['token']
         ];
       }
+      if (!empty($data['address'])) {
+        $profile_data['profiles'][0]['attributes'][] = [
+          "alias" => "krit_152",
+          "value" => $data['address']
+        ];
+      }
+      if (!empty($data['city']) && !empty($data['postcode'])) {
+        $profile_data['profiles'][0]['attributes'][] = [
+          "alias" => "krit_153",
+          "value" => $data['postcode'] . ', ' . $data['city']
+        ];
+      }
       $request_json = json_encode($profile_data, true);
     }
     elseif ($requestOperation == 'registerProfile') {
@@ -285,7 +318,7 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
               "value" => $data['ip_address']
             ],
             [
-              "alias" => "krit_17205",
+              "alias" => "Newsletter",
               "value" => $data['newsletter']
             ],
           ],
@@ -313,6 +346,18 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
         $profile_data['profile']['attributes'][] = [
           "alias" => "drupal_user_token",
           "value" => $data['token']
+        ];
+      }
+      if (!empty($data['address'])) {
+        $profile_data['profiles'][0]['attributes'][] = [
+          "alias" => "krit_152",
+          "value" => $data['address']
+        ];
+      }
+      if (!empty($data['city']) && !empty($data['postcode'])) {
+        $profile_data['profiles'][0]['attributes'][] = [
+          "alias" => "krit_153",
+          "value" => $data['postcode'] . ', ' . $data['city']
         ];
       }
       $request_json = json_encode($profile_data, true);
