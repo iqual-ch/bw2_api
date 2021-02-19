@@ -126,6 +126,7 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
       ]);
       if ($getProfileResponse->getStatusCode() == '200') {
         $getProfileJson = json_decode($getProfileResponse->getBody(), true);
+        // Edit the contact with the xcampaign id from the response.
         $this->editContact(reset(reset($getProfileJson['profiles'])['attributes'])['value'], $data);
         return reset(reset($getProfileJson['profiles'])['attributes'])['value'];
       }
@@ -403,7 +404,7 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
     ]);
     } catch (\Exception $e) {}
     //$this->logErrors($deleteProfileResponse);
-    if ($deleteFromBlacklistResponse->getStatusCode() == '200') {
+    if (!empty($deleteFromBlacklistResponse) && $deleteFromBlacklistResponse->getStatusCode() == '200') {
       \Drupal::logger('xcampaign_api')->notice('Profile deleted');
       return TRUE;
     }
@@ -436,7 +437,7 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
       ]);
     } catch (\Exception $e) {}
     //$this->logErrors($deleteProfileResponse);
-    if ($updateBlacklistResponse->getStatusCode() == '200') {
+    if (!empty($updateBlacklistResponse) && $updateBlacklistResponse->getStatusCode() == '200') {
       \Drupal::logger('xcampaign_api')->notice('Profile deleted');
       return TRUE;
     }
