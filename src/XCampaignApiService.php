@@ -277,6 +277,12 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
           "value" => $data['last_name']
         ];
       }
+      if (!empty($data['birth_date'])) {
+        $profile_data['profile']['attributes'][] = [
+          "alias" => "krit_155",
+          "value" => $data['birth_date']
+        ];
+      }
       if (!empty($data['user_id'])) {
         $profile_data['profiles'][0]['attributes'][] = [
           "alias" => "drupal_user_id",
@@ -340,6 +346,12 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
         $profile_data['profile']['attributes'][] = [
           "alias" => "drupal_user_id",
           "value" => $data['user_id']
+        ];
+      }
+      if (!empty($data['birth_date'])) {
+        $profile_data['profile']['attributes'][] = [
+          "alias" => "krit_155",
+          "value" => $data['birth_date']
         ];
       }
       if (!empty($data['token'])) {
