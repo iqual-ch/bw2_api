@@ -1,0 +1,9 @@
+bw2_api.settings:
+  path: '/admin/config/services/bw2-api'
+  defaults:
+    _form: 'Drupal\bw2_api\Form\bw2ApiSettingsForm'
+    _title: 'bw2 API settings'
+  options:
+    _admin_route: TRUE
+  requirements:
+    _permission: 'administer bw2 api'

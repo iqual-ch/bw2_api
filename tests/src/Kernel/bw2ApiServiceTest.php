@@ -1,22 +1,22 @@
 <?php
 
-namespace Drupal\Tests\xcampaign_api\Kernel;
+namespace Drupal\Tests\bw2_api\Kernel;
 
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Render\Markup;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
- * @coversDefaultClass \Drupal\xcampaign_api\XCampaignApiService
- * @group xcampaign_api
+ * @coversDefaultClass \Drupal\bw2_api\bw2ApiService
+ * @group bw2_api
  */
-class XCampaignApiServiceTest extends KernelTestBase {
+class bw2ApiServiceTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
    */
   protected static $modules = [
-    'xcampaign_api',
+    'bw2_api',
   ];
 
   /**
@@ -25,11 +25,11 @@ class XCampaignApiServiceTest extends KernelTestBase {
   protected $configFactory;
 
   /**
-   * The xcampaign_api.
+   * The bw2_api.
    *
-   * @var \Drupal\xcampaign_api\XCampaignApiService
+   * @var \Drupal\bw2_api\bw2ApiService
    */
-  protected $xcampaignApi;
+  protected $bw2Api;
 
   /**
    * {@inheritdoc}
@@ -37,10 +37,10 @@ class XCampaignApiServiceTest extends KernelTestBase {
   public function setUp() {
     parent::setUp();
     $this->installConfig([
-      'xcampaign_api',
+      'bw2_api',
     ]);
     $this->configFactory = $this->container->get('config.factory');
-    $config = $this->configFactory->getEditable('xcampaign_api.settings');
+    $config = $this->configFactory->getEditable('bw2_api.settings');
     $config->set('credential_provider', 'config');
     $config->set('credentials', [
       'config' => [
@@ -49,14 +49,14 @@ class XCampaignApiServiceTest extends KernelTestBase {
       ],
     ]);
     $config->save();
-    $this->xcampaignApi = $this->container->get('xcampaign_api');
+    $this->bw2Api = $this->container->get('bw2_api');
   }
 
   /**
    * Tests getting the credentials from config.
    */
   public function testGetCredentials() {
-    $config = $this->xcampaignApi->getCredentials();
+    $config = $this->bw2Api->getCredentials();
     $this->assertTrue($config['username'] == 'Test');
     $this->assertTrue($config['password'] == 'Password');
   }

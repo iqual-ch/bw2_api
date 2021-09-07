@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\xcampaign_api;
+namespace Drupal\bw2_api;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -8,10 +8,10 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Class XCampaignApiService
- * @package Drupal\xcampaign_api
+ * Class bw2ApiService
+ * @package Drupal\bw2_api
  */
-class XCampaignApiService implements XCampaignApiServiceInterface {
+class bw2ApiService implements bw2ApiServiceInterface {
 
   /**
    * @var EntityTypeManagerInterface
@@ -37,7 +37,7 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
   protected $auth;
 
   /**
-   * XCampaignApiService constructor.
+   * bw2ApiService constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
@@ -49,7 +49,7 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
   public function __construct(EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory, RequestStack $request_stack) {
     $this->entityTypeManager = $entity_type_manager;
     $this->request = $request_stack->getCurrentRequest();
-    $this->config = $config_factory->get('xcampaign_api.settings');
+    $this->config = $config_factory->get('bw2_api.settings');
     $credentials = $this->getCredentials();
 
     $this->auth = [
@@ -111,7 +111,7 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
    */
   public function createContact($email, $data) {
     if (empty($this->auth)) {
-      throw new \Exception("XCampaign API not authorized.");
+      throw new \Exception("bw2 API not authorized.");
     }
     // Check if the user already exists.
     $request_json = $this->getRequestJson($data, 'getProfile');
@@ -126,7 +126,7 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
       ]);
       if ($getProfileResponse->getStatusCode() == '200') {
         $getProfileJson = json_decode($getProfileResponse->getBody(), true);
-        // Edit the contact with the xcampaign id from the response.
+        // Edit the contact with the bw2 id from the response.
         $this->editContact(reset(reset($getProfileJson['profiles'])['attributes'])['value'], $data);
         return reset(reset($getProfileJson['profiles'])['attributes'])['value'];
       }
@@ -137,7 +137,7 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
 
     $data['newsletter'] = !empty($data['preferences']) && in_array($this->auth['newsletter'], $data['preferences']) ? 1 : 0;
     $request_json = $this->getRequestJson($data, 'registerProfile');
-    // Create the http request to the xcampaign.
+    // Create the http request to the bw2.
     $response = \Drupal::httpClient()->post($this->auth['baseUrl'] . '/rest/registerProfile', [
       'headers' => [
         'Content-type' => 'application/json',
@@ -159,7 +159,7 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
         'body' => $request_json,
       ]);
       $getProfileJson = json_decode($getProfileResponse->getBody(), true);
-      \Drupal::logger('xcampaign_api')->notice('User successfully created on XCampaign');
+      \Drupal::logger('bw2_api')->notice('User successfully created on bw2');
       return reset(reset($getProfileJson['profiles'])['attributes'])['value'];
     }
     return FALSE;
@@ -170,14 +170,14 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
    */
   public function editContact($contact_id, $data, $createIfNotExists = false) {
     if (empty($this->auth)) {
-      throw new \Exception("XCampaign API not authorized.");
+      throw new \Exception("bw2 API not authorized.");
     }
     $data['newsletter'] = !empty($data['preferences']) && in_array($this->auth['newsletter'], $data['preferences']) ? 1 : 0;
 
 
     $request_json = $this->getRequestJson($data, 'updateProfile');
-    \Drupal::logger('xcampaign_api')->notice($request_json);
-    // Create the http request to the xcampaign.
+    \Drupal::logger('bw2_api')->notice($request_json);
+    // Create the http request to the bw2.
     $response = \Drupal::httpClient()->post($this->auth['baseUrl'] . '/rest/updateProfiles', [
       'headers' => [
         'Content-type' => 'application/json',
@@ -189,8 +189,8 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
 
     //$this->logErrors($response);
     if ($response->getStatusCode() == '200') {
-      \Drupal::logger('xcampaign_api')->notice($response->getBody());
-      \Drupal::logger('xcampaign_api')->notice('User successfully updated on XCampaign');
+      \Drupal::logger('bw2_api')->notice($response->getBody());
+      \Drupal::logger('bw2_api')->notice('User successfully updated on bw2');
       return TRUE;
     }
     return FALSE;
@@ -211,7 +211,7 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
     ]);
     //$this->logErrors($deleteProfileResponse);
     if ($deleteProfileResponse->getStatusCode() == '200') {
-      \Drupal::logger('xcampaign_api')->notice('Profile deleted');
+      \Drupal::logger('bw2_api')->notice('Profile deleted');
       return TRUE;
     }
     else {
@@ -252,7 +252,7 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
             "attributes" => [
               [
                 "alias" => "sys_recip_id",
-                "value" => $data['xcampaign_id']
+                "value" => $data['bw2_id']
               ],
               [
                 "alias" => "email",
@@ -405,7 +405,7 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
     } catch (\Exception $e) {}
     //$this->logErrors($deleteProfileResponse);
     if (!empty($deleteFromBlacklistResponse) && $deleteFromBlacklistResponse->getStatusCode() == '200') {
-      \Drupal::logger('xcampaign_api')->notice('Profile deleted');
+      \Drupal::logger('bw2_api')->notice('Profile deleted');
       return TRUE;
     }
     else {
@@ -438,7 +438,7 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
     } catch (\Exception $e) {}
     //$this->logErrors($deleteProfileResponse);
     if (!empty($updateBlacklistResponse) && $updateBlacklistResponse->getStatusCode() == '200') {
-      \Drupal::logger('xcampaign_api')->notice('Profile deleted');
+      \Drupal::logger('bw2_api')->notice('Profile deleted');
       return TRUE;
     }
     else {
@@ -447,14 +447,14 @@ class XCampaignApiService implements XCampaignApiServiceInterface {
   }
 
   /**
-   * Small helper function to log xcampaign api errors.
+   * Small helper function to log bw2 api errors.
    *
    * @param \GuzzleHttp\Psr7\Response $response
    *
    */
   protected function logErrors($response) {
     // Log all errors.
-    //\Drupal::logger('commerce_xcampaign')->error('XCampaign API Error: @message', ['@message' => $response->getBody()]);
+    //\Drupal::logger('commerce_bw2')->error('bw2 API Error: @message', ['@message' => $response->getBody()]);
   }
 
 }

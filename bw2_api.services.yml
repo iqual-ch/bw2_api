@@ -1,4 +1,4 @@
 services:
-  xcampaign_api:
-    class: Drupal\xcampaign_api\XCampaignApiService
+  bw2_api:
+    class: Drupal\bw2_api\bw2ApiService
     arguments: ['@entity_type.manager', '@config.factory', '@request_stack']

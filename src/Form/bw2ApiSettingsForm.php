@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\xcampaign_api\Form;
+namespace Drupal\bw2_api\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -11,33 +11,33 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provide the settings form for entity clone.
  */
-class XCampaignApiSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
+class bw2ApiSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
 
   /**
    * {@inheritdoc}
    */
   public function getEditableConfigNames() {
-    return ['xcampaign_api.settings'];
+    return ['bw2_api.settings'];
   }
 
   /**
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'xcampaign_settings_form';
+    return 'bw2_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('xcampaign_api.settings');
+    $config = $this->config('bw2_api.settings');
 
     $form['base_url'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Base url'),
       '#default_value' => $config->get('base_url'),
-      '#description' => $this->t('The URL of xcampaign API with protocol (https).'),
+      '#description' => $this->t('The URL of bw2 API with protocol (https).'),
       '#required' => TRUE,
     ];
 
@@ -45,7 +45,7 @@ class XCampaignApiSettingsForm extends ConfigFormBase implements ContainerInject
       '#type' => 'textfield',
       '#title' => $this->t('Newsletter Group ID'),
       '#default_value' => $config->get('newsletter'),
-      '#description' => $this->t('The newsletter group ID that will be used for XCampaign.'),
+      '#description' => $this->t('The newsletter group ID that will be used for bw2.'),
       '#required' => TRUE,
     ];
 
@@ -53,7 +53,7 @@ class XCampaignApiSettingsForm extends ConfigFormBase implements ContainerInject
       '#type' => 'select',
       '#title' => $this->t('Credential provider'),
       '#options' => [
-        'config' => 'XCampaign API (config)',
+        'config' => 'bw2 API (config)',
       ],
       '#default_value' => $config->get('credential_provider'),
       '#ajax' => [
@@ -141,7 +141,7 @@ class XCampaignApiSettingsForm extends ConfigFormBase implements ContainerInject
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('xcampaign_api.settings');
+    $config = $this->config('bw2_api.settings');
     $form_state->cleanValues();
 
     $config->set('base_url', $form_state->getValue('base_url'));

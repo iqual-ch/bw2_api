@@ -1,9 +1,0 @@
-xcampaign_api.settings:
-  path: '/admin/config/services/xcampaign-api'
-  defaults:
-    _form: 'Drupal\xcampaign_api\Form\XCampaignApiSettingsForm'
-    _title: 'XCampaign API settings'
-  options:
-    _admin_route: TRUE
-  requirements:
-    _permission: 'administer xcampaign api'

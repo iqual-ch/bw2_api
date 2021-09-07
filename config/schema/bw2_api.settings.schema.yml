@@ -1,6 +1,6 @@
-xcampaign_api.settings:
+bw2_api.settings:
   type: config_object
-  label: 'XCampaign API settings'
+  label: 'bw2 API settings'
   mapping:
     base_url:
       type: string
@@ -15,11 +15,11 @@ xcampaign_api.settings:
       type: sequence
       label: 'Credentials'
       sequence:
-        type: xcampaign_api.settings.credentials.[%key]
+        type: bw2_api.settings.credentials.[%key]
 
-xcampaign_api.settings.credentials.config:
+bw2_api.settings.credentials.config:
   type: mapping
-  label: 'XCampaign API credentials'
+  label: 'bw2 API credentials'
   mapping:
     username:
       type: string
@@ -28,9 +28,9 @@ xcampaign_api.settings.credentials.config:
       type: string
       label: 'Password key'
 
-xcampaign_api.settings.credentials.key:
+bw2_api.settings.credentials.key:
   type: mapping
-  label: 'XCampaign API credentials with Key Module'
+  label: 'bw2 API credentials with Key Module'
   mapping:
     username:
       type: string
@@ -39,9 +39,9 @@ xcampaign_api.settings.credentials.key:
       type: string
       label: 'Password key'
 
-xcampaign_api.settings.credentials.multikey:
+bw2_api.settings.credentials.multikey:
   type: mapping
-  label: 'XCampaign API credentials with Key Module (user/password keys)'
+  label: 'bw2 API credentials with Key Module (user/password keys)'
   mapping:
     user_password:
       type: string

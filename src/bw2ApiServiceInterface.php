@@ -1,16 +1,16 @@
 <?php
 
-namespace Drupal\xcampaign_api;
+namespace Drupal\bw2_api;
 
 /**
- * Interface XCampaignApiServiceInterface
+ * Interface bw2ApiServiceInterface
  *
- * @package Drupal\xcampaign_api
+ * @package Drupal\bw2_api
  */
-interface XCampaignApiServiceInterface {
+interface bw2ApiServiceInterface {
 
   /**
-   * Gets username/password for xcampaign api call.
+   * Gets username/password for bw2 api call.
    *
    * @return array
    *   Array with 'username' and 'password' as keys.

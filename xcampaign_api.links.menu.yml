@@ -1,5 +1,0 @@
-xcampaign_api.settings:
-  title: 'XCampaign API settings'
-  parent: system.admin_config_services
-  description: 'Configure credentials and basic settings for xcampaign api.'
-  route_name: xcampaign_api.settings

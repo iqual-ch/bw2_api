@@ -1,5 +1,5 @@
 {
-    "name": "drupal/xcampaign_api",
-    "description": "Provides integration with the xcampaign api library.",
+    "name": "drupal/bw2_api",
+    "description": "Provides integration with the bw2 api library.",
     "type": "drupal-module"
 }

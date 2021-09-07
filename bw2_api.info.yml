@@ -1,0 +1,6 @@
+name: 'bw2 API'
+description: 'Provides integration with the bw2 API.'
+type: module
+core_version_requirement: ^8.7.7  || ^9
+configure: bw2_api.settings
+package: 'Other'
