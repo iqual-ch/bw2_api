@@ -10,12 +10,22 @@ namespace Drupal\bw2_api;
 interface bw2ApiServiceInterface {
 
   /**
-   * Gets username/password for bw2 api call.
    *
    * @return array
-   *   Array with 'username' and 'password' as keys.
    */
-  public function getCredentials();
+  public function getContacts();
+
+  /**
+   *
+   * @return array
+   */
+  public function getCountryInformation();
+
+  /**
+   *
+   * @return array
+   */
+  public function getLanguageInformation();
 
   /**
    * @param string $email
@@ -33,26 +43,5 @@ interface bw2ApiServiceInterface {
    * @return mixed
    */
   public function editContact($contact_id, $data, $createIfNotExists);
-
-  /**
-   * @param integer $contact_id
-   *
-   * @return mixed
-   */
-  public function deleteContact($contact_id);
-
-  /**
-   * @param $email
-   *
-   * @return mixed
-   */
-  public function updateBlacklist($email);
-
-  /**
-   * @param $email
-   *
-   * @return mixed
-   */
-  public function deleteFromBlacklist($email);
 
 }

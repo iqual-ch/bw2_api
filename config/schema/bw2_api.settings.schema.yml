@@ -8,41 +8,12 @@ bw2_api.settings:
     newsletter:
       type: string
       label: 'Newsletter'
-    credential_provider:
+    portaluid:
       type: string
-      label: 'Credential provider'
-    credentials:
-      type: sequence
-      label: 'Credentials'
-      sequence:
-        type: bw2_api.settings.credentials.[%key]
-
-bw2_api.settings.credentials.config:
-  type: mapping
-  label: 'bw2 API credentials'
-  mapping:
-    username:
+      label: 'Portal UID'
+    objectuid_get:
       type: string
-      label: 'Username key'
-    password:
+      label: 'Object UID for the GET Requests'
+    objectuid_post:
       type: string
-      label: 'Password key'
-
-bw2_api.settings.credentials.key:
-  type: mapping
-  label: 'bw2 API credentials with Key Module'
-  mapping:
-    username:
-      type: string
-      label: 'Username key'
-    password:
-      type: string
-      label: 'Password key'
-
-bw2_api.settings.credentials.multikey:
-  type: mapping
-  label: 'bw2 API credentials with Key Module (user/password keys)'
-  mapping:
-    user_password:
-      type: string
-      label: 'User/Password key'
+      label: 'Object UID for the POST / PATCH Requests'

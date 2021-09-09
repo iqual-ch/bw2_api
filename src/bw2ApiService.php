@@ -50,12 +50,12 @@ class bw2ApiService implements bw2ApiServiceInterface {
     $this->entityTypeManager = $entity_type_manager;
     $this->request = $request_stack->getCurrentRequest();
     $this->config = $config_factory->get('bw2_api.settings');
-    $credentials = $this->getCredentials();
 
     $this->auth = [
-      'userCode' => $credentials['username'],
-      'clientCode' => $credentials['password'],
       'baseUrl' => $this->config->get('base_url'),
+      'portaluid' => $this->config->get('portaluid'),
+      'objectuid_get' => $this->config->get('objectuid_get'),
+      'objectuid_post' => $this->config->get('objectuid_post'),
       'newsletter' => $this->config->get('newsletter')
     ];
   }
@@ -63,104 +63,126 @@ class bw2ApiService implements bw2ApiServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCredentials() {
-    $credential_provider = $this->config->get('credential_provider');
-
-    switch ($credential_provider) {
-      case 'config':
-        $credentials = $this->config->get('credentials');
-        if (isset($credentials['config'])) {
-          $username = $credentials['config']['username'];
-          $password = $credentials['config']['password'];
-        }
-        break;
-
-      case 'key':
-        /** @var \Drupal\Core\Entity\EntityStorageInterface $storage */
-        $storage = $this->entityTypeManager->getStorage('key');
-        /** @var \Drupal\key\KeyInterface $username_key */
-        if ($username_key = $storage->load($this->config['credentials']['key']['username'])) {
-          $username = $username_key->getKeyValue();
-        }
-        /** @var \Drupal\key\KeyInterface $password_key */
-        if ($password_key = $storage->load($this->config['credentials']['key']['password'])) {
-          $password = $password_key->getKeyValue();
-        }
-        break;
-
-      case 'multikey':
-        /** @var \Drupal\Core\Entity\EntityStorageInterface $storage */
-        $storage = \Drupal::entityTypeManager()->getStorage('key');
-        /** @var \Drupal\key\KeyInterface $username_key */
-        if ($user_password_key = $storage->load($this->config['credentials']['multikey']['user_password'])) {
-          if ($values = $user_password_key->getKeyValues()) {
-            $username = $values['username'];
-            $password = $values['password'];
-          }
-        }
-        break;
-    }
-    return [
-      'username' => $username,
-      'password' => $password
-    ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function createContact($email, $data) {
+  public function getContacts() {
     if (empty($this->auth)) {
       throw new \Exception("bw2 API not authorized.");
     }
-    // Check if the user already exists.
-    $request_json = $this->getRequestJson($data, 'getProfile');
-    try {
-      $getProfileResponse = \Drupal::httpClient()->post($this->auth['baseUrl'] . '/rest/getProfiles', [
-        'headers' => [
-          'Content-type' => 'application/json',
-          'client' => $this->auth['clientCode'],
-          'user' => $this->auth['userCode']
-        ],
-        'body' => $request_json,
-      ]);
-      if ($getProfileResponse->getStatusCode() == '200') {
-        $getProfileJson = json_decode($getProfileResponse->getBody(), true);
-        // Edit the contact with the bw2 id from the response.
-        $this->editContact(reset(reset($getProfileJson['profiles'])['attributes'])['value'], $data);
-        return reset(reset($getProfileJson['profiles'])['attributes'])['value'];
-      }
-    }
-    catch (\Exception $exception) {
 
-    }
-
-    $data['newsletter'] = !empty($data['preferences']) && in_array($this->auth['newsletter'], $data['preferences']) ? 1 : 0;
-    $request_json = $this->getRequestJson($data, 'registerProfile');
+    $request_json = $this->getRequestJson('getUsers');
+    \Drupal::logger('bw2_api')->notice($request_json);
     // Create the http request to the bw2.
-    $response = \Drupal::httpClient()->post($this->auth['baseUrl'] . '/rest/registerProfile', [
+    $response = \Drupal::httpClient()->get($this->auth['baseUrl'], [
       'headers' => [
         'Content-type' => 'application/json',
-        'client' => $this->auth['clientCode'],
-        'user' => $this->auth['userCode']
+        'requesttype' => 'string',
+        'objectguid' => $this->auth['objectguid_get'],
+        'portalguid' => $this->auth['portalguid']
       ],
       'body' => $request_json,
     ]);
 
     //$this->logErrors($response);
+    if ($response->getStatusCode() == '200' ) {
+      \Drupal::logger('bw2_api')->notice('Users list retrieved from bw2');
+      $data = json_decode($response->getBody(), true);
+      return $data['Result'];
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCountryInformation() {
+    if (empty($this->auth)) {
+      throw new \Exception("bw2 API not authorized.");
+    }
+
+    $request_json = $this->getRequestJson('getCountries');
+    \Drupal::logger('bw2_api')->notice($request_json);
+    // Create the http request to the bw2.
+    $response = \Drupal::httpClient()->get($this->auth['baseUrl'], [
+      'headers' => [
+        'Content-type' => 'application/json',
+        'requesttype' => 'string',
+        'objectguid' => $this->auth['objectguid_get'],
+        'portalguid' => $this->auth['portalguid']
+      ],
+      'body' => $request_json,
+    ]);
+
+    if ($response->getStatusCode() == '200' ) {
+      \Drupal::logger('bw2_api')->notice('Countries list retrieved from bw2');
+      $data = json_decode($response->getBody(), true);
+      return $data['Result'];
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getLanguageInformation() {
+    if (empty($this->auth)) {
+      throw new \Exception("bw2 API not authorized.");
+    }
+
+    $request_json = $this->getRequestJson('getLanguages');
+    \Drupal::logger('bw2_api')->notice($request_json);
+    // Create the http request to the bw2.
+    $response = \Drupal::httpClient()->get($this->auth['baseUrl'], [
+      'headers' => [
+        'Content-type' => 'application/json',
+        'requesttype' => 'string',
+        'objectguid' => $this->auth['objectguid_get'],
+        'portalguid' => $this->auth['portalguid']
+      ],
+      'body' => $request_json,
+    ]);
+
+    if ($response->getStatusCode() == '200' ) {
+      \Drupal::logger('bw2_api')->notice('Countries list retrieved from bw2');
+      $data = json_decode($response->getBody(), true);
+      return $data['Result'];
+    }
+    return FALSE;
+  }
+
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createContact($data) {
+    if (empty($this->auth)) {
+      throw new \Exception("bw2 API not authorized.");
+    }
+    // if the user already exists we update it instead.
+    if ($user_id = $this->userExists($data->getEmail())){
+      return $this->editContact($user_id, $data);
+    }
+    else{
+      $request_json = $this->getRequestJson($data, 'createUser');
+    }
+   
+    // $data['newsletter'] = !empty($data['preferences']) && in_array($this->auth['newsletter'], $data['preferences']) ? 1 : 0;
+    $request_json = $this->getRequestJson($data, 'registerProfile');
+    // Create the http request to the bw2.
+    $response = \Drupal::httpClient()->post($this->auth['baseUrl'], [
+      'headers' => [
+        'Content-type' => 'application/json',
+        'requesttype' => 'string',
+        'objectguid' => $this->auth['objectguid_post'],
+        'portalguid' => $this->auth['portalguid']
+      ],
+      'body' => $request_json,
+    ]);
+
     if ($response->getStatusCode() == '200') {
-      $request_json = $this->getRequestJson($data, 'getProfile');
-      $getProfileResponse = \Drupal::httpClient()->post($this->auth['baseUrl'] . '/rest/getProfiles', [
-        'headers' => [
-          'Content-type' => 'application/json',
-          'client' => $this->auth['clientCode'],
-          'user' => $this->auth['userCode']
-        ],
-        'body' => $request_json,
-      ]);
-      $getProfileJson = json_decode($getProfileResponse->getBody(), true);
+      $responseData = json_decode($response->getBody(), true);
+      \Drupal::logger('bw2_api')->notice($response->getBody());
       \Drupal::logger('bw2_api')->notice('User successfully created on bw2');
-      return reset(reset($getProfileJson['profiles'])['attributes'])['value'];
+      $user->set('field_iq_group_bw2_id', $responseData['Result']['ItemID']);
+      return TRUE;
     }
     return FALSE;
   }
@@ -172,22 +194,22 @@ class bw2ApiService implements bw2ApiServiceInterface {
     if (empty($this->auth)) {
       throw new \Exception("bw2 API not authorized.");
     }
-    $data['newsletter'] = !empty($data['preferences']) && in_array($this->auth['newsletter'], $data['preferences']) ? 1 : 0;
+    // $data['newsletter'] = !empty($data['preferences']) && in_array($this->auth['newsletter'], $data['preferences']) ? 1 : 0;
 
 
-    $request_json = $this->getRequestJson($data, 'updateProfile');
+    $request_json = $this->getRequestJson($data, 'updateUser', $contact_id);
     \Drupal::logger('bw2_api')->notice($request_json);
     // Create the http request to the bw2.
-    $response = \Drupal::httpClient()->post($this->auth['baseUrl'] . '/rest/updateProfiles', [
+    $response = \Drupal::httpClient()->post($this->auth['baseUrl'], [
       'headers' => [
         'Content-type' => 'application/json',
-        'client' => $this->auth['clientCode'],
-        'user' => $this->auth['userCode']
+        'requesttype' => 'string',
+        'objectguid' => $this->auth['objectguid_post'],
+        'portalguid' => $this->auth['portalguid']
       ],
       'body' => $request_json,
     ]);
 
-    //$this->logErrors($response);
     if ($response->getStatusCode() == '200') {
       \Drupal::logger('bw2_api')->notice($response->getBody());
       \Drupal::logger('bw2_api')->notice('User successfully updated on bw2');
@@ -197,264 +219,152 @@ class bw2ApiService implements bw2ApiServiceInterface {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function deleteContact($contact_id) {
-    $request_json = $this->getRequestJson(['contact_id' => $contact_id], 'delete');
-    $deleteProfileResponse = \Drupal::httpClient()->post($this->auth['baseUrl'] . '/rest/deleteProfile', [
-      'headers' => [
-        'Content-type' => 'application/json',
-        'client' => $this->auth['clientCode'],
-        'user' => $this->auth['userCode']
-      ],
-      'body' => $request_json,
-    ]);
-    //$this->logErrors($deleteProfileResponse);
-    if ($deleteProfileResponse->getStatusCode() == '200') {
-      \Drupal::logger('bw2_api')->notice('Profile deleted');
-      return TRUE;
-    }
-    else {
-      return FALSE;
-    }
-  }
-
-  /**
    * Helper function to construct the json requests.
    */
-  protected function getRequestJson($data, $requestOperation) {
-    if ($requestOperation == 'delete') {
-      $profile_data = [
-        "profile" => [
-          "attribute" => [
-            "alias" => "sys_recip_id",
-            "value" => $data['contact_id']
-          ]
+  protected function getRequestJson($data, $requestOperation, $contact_id = false) {
+    if ($requestOperation == 'getUsers') {
+      $requestArray = [
+        'Data' => [
+          'ItemVersion' => '0',
+          'DataProviderCode' => 'GastData'
         ]
       ];
-      $request_json = json_encode($profile_data, true);
     }
-    elseif ($requestOperation == 'getProfile') {
-      $profile_data = [
-        "profile" => [
-          "attribute" => [
-            "alias" => "email",
-            "value" => $data['email']
-          ]
+    elseif ($requestOperation == 'getCountries') {
+      $requestArray = [
+        'Data' => [
+          'ItemVersion' => '0',
+          'DataProviderCode' => 'CountryData'
         ]
       ];
-      $request_json = json_encode($profile_data, true);
     }
-    elseif ($requestOperation == 'updateProfile') {
-      $profile_data = [
-        "profiles" => [
-          [
-            "attributes" => [
-              [
-                "alias" => "sys_recip_id",
-                "value" => $data['bw2_id']
-              ],
-              [
-                "alias" => "email",
-                "value" => $data['email']
-              ],
-              [
-                "alias" => "Newsletter",
-                "value" => $data['newsletter']
-              ],
-            ],
-          ],
-        ],
+    elseif ($requestOperation == 'getLanguages') {
+      $requestArray = [
+        'Data' => [
+          'ItemVersion' => '0',
+          'DataProviderCode' => 'LanguageData'
+        ]
       ];
-      if (!empty($data['first_name'])) {
-        $profile_data['profiles'][0]['attributes'][] = [
-          "alias" => "krit_151",
-          "value" => $data['first_name']
-        ];
-      }
-      if (!empty($data['last_name'])) {
-        $profile_data['profiles'][0]['attributes'][] = [
-          "alias" => "krit_150",
-          "value" => $data['last_name']
-        ];
-      }
-      if (!empty($data['birth_date'])) {
-        $profile_data['profile']['attributes'][] = [
-          "alias" => "krit_155",
-          "value" => $data['birth_date']
-        ];
-      }
-      if (!empty($data['user_id'])) {
-        $profile_data['profiles'][0]['attributes'][] = [
-          "alias" => "drupal_user_id",
-          "value" => $data['user_id']
-        ];
-      }
-      if (!empty($data['token'])) {
-        $profile_data['profiles'][0]['attributes'][] = [
-          "alias" => "drupal_user_token",
-          "value" => $data['token']
-        ];
-      }
-      if (!empty($data['address'])) {
-        $profile_data['profiles'][0]['attributes'][] = [
-          "alias" => "krit_152",
-          "value" => $data['address']
-        ];
-      }
-      if (!empty($data['city']) && !empty($data['postcode'])) {
-        $profile_data['profiles'][0]['attributes'][] = [
-          "alias" => "krit_153",
-          "value" => $data['postcode'] . ', ' . $data['city']
-        ];
-      }
-      $request_json = json_encode($profile_data, true);
     }
-    elseif ($requestOperation == 'registerProfile') {
-      $profile_data = [
-        "customId" => 'GCBRegForm' . $data['user_id'],
-        "profile" => [
-          "importAsDoubleOptIn" => false,
-          "attributes" => [
-            [
-              "alias" => "email",
-              "value" => $data['email']
-            ],
-            [
-              "alias" => "sys_access_ip_reg",
-              "value" => $data['ip_address']
-            ],
-            [
-              "alias" => "Newsletter",
-              "value" => $data['newsletter']
-            ],
-          ],
-        ],
+    elseif ($requestOperation == 'createUser') {
+      $bw2Data = $this->convertDataForBw2($data);
+      $requestArray = [
+        'Data' => [
+          'itemWriterCode' => 'GastItemWriter',
+          'ItemProperties' => $bw2Data
+        ]
       ];
-      if (!empty($data['first_name'])) {
-        $profile_data['profile']['attributes'][] = [
-          "alias" => "krit_151",
-          "value" => $data['first_name']
-        ];
-      }
-      if (!empty($data['last_name'])) {
-        $profile_data['profile']['attributes'][] = [
-          "alias" => "krit_150",
-          "value" => $data['last_name']
-        ];
-      }
-      if (!empty($data['user_id'])) {
-        $profile_data['profile']['attributes'][] = [
-          "alias" => "drupal_user_id",
-          "value" => $data['user_id']
-        ];
-      }
-      if (!empty($data['birth_date'])) {
-        $profile_data['profile']['attributes'][] = [
-          "alias" => "krit_155",
-          "value" => $data['birth_date']
-        ];
-      }
-      if (!empty($data['token'])) {
-        $profile_data['profile']['attributes'][] = [
-          "alias" => "drupal_user_token",
-          "value" => $data['token']
-        ];
-      }
-      if (!empty($data['address'])) {
-        $profile_data['profiles'][0]['attributes'][] = [
-          "alias" => "krit_152",
-          "value" => $data['address']
-        ];
-      }
-      if (!empty($data['city']) && !empty($data['postcode'])) {
-        $profile_data['profiles'][0]['attributes'][] = [
-          "alias" => "krit_153",
-          "value" => $data['postcode'] . ', ' . $data['city']
-        ];
-      }
-      $request_json = json_encode($profile_data, true);
     }
+    elseif ($requestOperation == 'updateUser') {
+      $bw2Data = $this->convertDataForBw2($data);
+      $requestArray = [
+        'Data' => [
+          'itemWriterCode' => 'GastItemWriter',
+          'Item_ID' => $contact_id,
+          'ItemProperties' => $bw2Data
+        ]
+      ];
+    }
+    $request_json = json_encode($requestArray, true);
     return $request_json;
   }
 
   /**
-   * {@inheritDoc}
+   * Helper function to convert the user data to the bw2 format.
    */
-  public function deleteFromBlacklist($email) {
+  public function convertDataForBw2($user){
+    $langCode = $this->getLanguageCode($user->getPreferredLangcode());
+    $countryCode = $this->getCountryCode(reset($user->get('field_iq_user_base_address')->getValue())['country_code']);
     $profile_data = [
-      "profile" => [
-        "attribute" => [
-          "alias" => "email",
-          "value" => $email
-        ]
-      ]
+      'Account_Active' => $user->status->value,
+      // 'Account_Salutation' => reset($user->get('field_iq_user_base_address')->getValue())['given_name'],
+      // 'Account_Drupal_ID' => $user->id(),
+      'Account_FirstName' => reset($user->get('field_iq_user_base_address')->getValue())['given_name'],
+      'Account_LastName' => reset($user->get('field_iq_user_base_address')->getValue())['family_name'],
+      // 'Account_AddressLine1' => reset($user->get('field_iq_user_base_address')->getValue())['address_line1'],
+      'Account_Street' => reset($user->get('field_iq_user_base_address')->getValue())['address_line1'],
+      // 'Account_POBox' => reset($user->get('field_iq_user_base_address')->getValue())['street'],
+      'Account_PostalCode' => reset($user->get('field_iq_user_base_address')->getValue())['postal_code'],
+      'Account_City' => reset($user->get('field_iq_user_base_address')->getValue())['locality'],
+      'Account_Country_Dimension_ID' => $countryCode,
+      'Account_Email1' => $user->getEmail(),
+      'Account_Language_Dimension_ID' => $langCode
     ];
-    $request_json = json_encode($profile_data, true);
-    try {
 
-
-    $deleteFromBlacklistResponse = \Drupal::httpClient()->post($this->auth['baseUrl'] . '/rest/deleteFromBlacklist', [
-      'headers' => [
-        'Content-type' => 'application/json',
-        'client' => $this->auth['clientCode'],
-        'user' => $this->auth['userCode']
-      ],
-      'body' => $request_json,
-    ]);
-    } catch (\Exception $e) {}
-    //$this->logErrors($deleteProfileResponse);
-    if (!empty($deleteFromBlacklistResponse) && $deleteFromBlacklistResponse->getStatusCode() == '200') {
-      \Drupal::logger('bw2_api')->notice('Profile deleted');
-      return TRUE;
+    if ($user->hasField('field_iq_group_preferences') && !$user->get('field_iq_group_preferences')->isEmpty()) {
+      $profile_data['Visitor_AllowEmail'] = array_filter(array_column($user->field_iq_group_preferences->getValue(), 'target_id'));
     }
-    else {
-      return FALSE;
-    }
+    // if ($user->hasField('field_iq_group_bw2_id') && !empty($user->get('field_iq_group_bw2_id')->getValue())) {
+    //   $this->bw2ApiService->editContact($user->field_iq_group_bw2_id->value, $profile_data);
+    // } else {
+    //   $bw2_id = $this->bw2ApiService->createContact($email, $profile_data);
+    //   $user->set('field_iq_group_bw2_id', $bw2_id);
+    // }
+    return $profile_data;
   }
 
   /**
-   * {@inheritDoc}
+   * Helper function to convert the user language to the correct bw2 ID.
    */
-  public function updateBlacklist($email) {
-    $profile_data = [
-      "profile" => [
-        "attribute" => [
-          "alias" => "email",
-          "value" => $email
-        ]
-      ]
-    ];
-    $request_json = json_encode($profile_data, true);
-    try {
-      $updateBlacklistResponse = \Drupal::httpClient()->post($this->auth['baseUrl'] . '/rest/updateBlacklist', [
-        'headers' => [
-          'Content-type' => 'application/json',
-          'client' => $this->auth['clientCode'],
-          'user' => $this->auth['userCode']
-        ],
-        'body' => $request_json,
-      ]);
-    } catch (\Exception $e) {}
-    //$this->logErrors($deleteProfileResponse);
-    if (!empty($updateBlacklistResponse) && $updateBlacklistResponse->getStatusCode() == '200') {
-      \Drupal::logger('bw2_api')->notice('Profile deleted');
-      return TRUE;
+  public function getLanguageCode($langCode){
+    $codes = $this->getLanguageInformation();
+    $dimension_code = null;
+    switch ($langCode) {
+      case 'de':
+        $dimension_code = "D";
+        break;
+      case 'fr':
+        $dimension_code = "F";
+        break;
+      case 'en':
+        $dimension_code = "E";
+        break;
+      case 'it':
+        $dimension_code = "I";
+        break;
+      case 'es':
+        $dimension_code = "S";
+        break;
     }
-    else {
-      return FALSE;
+    if ($dimension_code){
+       foreach($codes['DataList'] as $lang){
+        if ($lang['Dimension_Code'] === $dimension_code ){
+          $code = $lang['Dimension_ID'];
+          break;
+        }
+      }
     }
+    return $code;
   }
 
   /**
-   * Small helper function to log bw2 api errors.
-   *
-   * @param \GuzzleHttp\Psr7\Response $response
-   *
+   * Helper function to convert the user country to the correct bw2 ID.
    */
-  protected function logErrors($response) {
-    // Log all errors.
-    //\Drupal::logger('commerce_bw2')->error('bw2 API Error: @message', ['@message' => $response->getBody()]);
+  public function getCountryCode($countryCode){
+    $codes = $this->getCountryInformation();
+    $dimension_code = $countryCode;
+    if ($dimension_code){
+       foreach($codes['DataList'] as $country){
+        if ($country['Dimension_Code'] === $dimension_code ){
+          $code = $country['Dimension_ID'];
+          break;
+        }
+      }
+    }
+    return $code;
+  }
+
+  /**
+   * Helper function to check if user exist in bw2.
+   */
+  public function userExists($email){
+    $users = $this->getContacts();
+    foreach($codes['DataList'] as $user){
+      if ($user['Account_Email1'] === $email ){
+        return $user['Account_ID'];
+      }
+    }
+    return false;
   }
 
 }

@@ -40,7 +40,7 @@ class bw2ApiSettingsForm extends ConfigFormBase implements ContainerInjectionInt
       '#description' => $this->t('The URL of bw2 API with protocol (https).'),
       '#required' => TRUE,
     ];
-
+    /** GPY: IS IT NEEDED? */
     $form['newsletter'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Newsletter Group ID'),
@@ -49,90 +49,29 @@ class bw2ApiSettingsForm extends ConfigFormBase implements ContainerInjectionInt
       '#required' => TRUE,
     ];
 
-    $form['credential_provider'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Credential provider'),
-      '#options' => [
-        'config' => 'bw2 API (config)',
-      ],
-      '#default_value' => $config->get('credential_provider'),
-      '#ajax' => [
-        'callback' => [$this, 'ajaxCallback'],
-        'wrapper' => 'api-credentials',
-        'method' => 'replace',
-        'effect' => 'fade',
-      ],
+    $form['portaluid'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('BW2 Portal ID'),
+      '#default_value' => $config->get('portaluid'),
+      '#description' => $this->t('The portal uid that will be used to connect to bw2 API.'),
       '#required' => TRUE,
     ];
 
-    $form['credentials'] = [
-      '#type' => 'details',
-      '#title' => $this->t('API-User credentials'),
-      '#open' => TRUE,
-      '#tree' => TRUE,
-      '#prefix' => '<div id="api-credentials">',
-      '#suffix' => '</div>',
+    $form['objectuid_get'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Object UID for GET Requests'),
+      '#default_value' => $config->get('objectuid_get'),
+      '#description' => $this->t('The object ID that will be used for all GET requests to bw2 API.'),
+      '#required' => TRUE,
     ];
 
-    $credential_provider = $form_state->getValue('credential_provider', $config->get('credential_provider'));
-
-    if (\Drupal::moduleHandler()->moduleExists('key')) {
-      $form['credential_provider']['#options']['key'] = 'Key Module';
-
-      /** @var \Drupal\key\Plugin\KeyPluginManager $key_type */
-      $key_type = \Drupal::service('plugin.manager.key.key_type');
-      if ($key_type->hasDefinition('user_password')) {
-        $form['credential_provider']['#options']['multikey'] = 'Key Module (user/password)';
-      }
-    }
-
-    if ($credential_provider === 'config') {
-      $form['credentials']['config']['username'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t('User code'),
-        '#default_value' => $config->get('credentials.config.username'),
-      ];
-
-      $form['credentials']['config']['password'] = [
-        '#type' => 'password',
-        '#title' => $this->t('Client code'),
-        '#default_value' => $config->get('credentials.config.password'),
-        '#attributes' => [
-          'autocomplete' => 'off',
-        ],
-      ];
-    }
-    elseif ($credential_provider === 'key') {
-      $form['credentials']['key']['username'] = [
-        '#type' => 'key_select',
-        '#title' => $this->t('Username'),
-        '#description' => $this->t('A username required by the api server.'),
-        '#default_value' => $config->get('smtp_credentials.key.username'),
-        '#empty_option' => $this->t('- Please select -'),
-        '#key_filters' => ['type' => 'authentication'],
-        '#required' => TRUE,
-      ];
-      $form['credentials']['key']['password'] = [
-        '#type' => 'key_select',
-        '#title' => $this->t('Password'),
-        '#description' => $this->t('A password required by the api server.'),
-        '#default_value' => $config->get('smtp_credentials.key.password'),
-        '#empty_option' => $this->t('- Please select -'),
-        '#key_filters' => ['type' => 'authentication'],
-        '#required' => TRUE,
-      ];
-    }
-    elseif ($credential_provider === 'multikey') {
-      $form['credentials']['multikey']['user_password'] = [
-        '#type' => 'key_select',
-        '#title' => $this->t('User/password'),
-        '#description' => $this->t('A username + password required by the SMTP server.'),
-        '#default_value' => $config->get('credentials.multikey.user_password'),
-        '#empty_option' => $this->t('- Please select -'),
-        '#key_filters' => ['type' => 'user_password'],
-        '#required' => TRUE,
-      ];
-    }
+    $form['objectuid_post'] = [
+      #type' => 'textfield',
+      '#title' => $this->t('Object UID for POST Requests'),
+      '#default_value' => $config->get('objectuid_post'),
+      '#description' => $this->t('The object ID that will be used for all POST / PUT / PATCH requests to bw2 API.'),
+      '#required' => TRUE,
+    ];
 
     return parent::buildForm($form, $form_state);
   }
@@ -145,30 +84,14 @@ class bw2ApiSettingsForm extends ConfigFormBase implements ContainerInjectionInt
     $form_state->cleanValues();
 
     $config->set('base_url', $form_state->getValue('base_url'));
-    $config->set('credential_provider', $form_state->getValue('credential_provider'));
+    $config->set('portaluid', $form_state->getValue('portaluid'));
+    $config->set('objectuid_get', $form_state->getValue('objectuid_get'));
+    $config->set('objectuid_post', $form_state->getValue('objectuid_post'));
     $config->set('newsletter', $form_state->getValue('newsletter'));
-
-    $config->set('credentials', [
-      $config->get('credential_provider') => $form_state->getValue(['credentials', $config->get('credential_provider')])
-    ]);
 
     $config->save();
 
     parent::submitForm($form, $form_state);
-  }
-
-  /**
-   * Ajax callback for the transport dependent configuration options.
-   *
-   * @param $form
-   *   The form array.
-   * @param FormStateInterface $form_state
-   *   The form state.
-   * @return array
-   *   The form element containing the configuration options.
-   */
-  public static function ajaxCallback(array $form, FormStateInterface $form_state) {
-    return $form['credentials'];
   }
 
 }
