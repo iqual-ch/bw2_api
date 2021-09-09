@@ -5,9 +5,9 @@ bw2_api.settings:
     base_url:
       type: string
       label: 'Base url'
-    newsletter:
-      type: string
-      label: 'Newsletter'
+    # newsletter:
+    #   type: string
+    #   label: 'Newsletter'
     portaluid:
       type: string
       label: 'Portal UID'

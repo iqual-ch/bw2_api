@@ -55,8 +55,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
       'baseUrl' => $this->config->get('base_url'),
       'portaluid' => $this->config->get('portaluid'),
       'objectuid_get' => $this->config->get('objectuid_get'),
-      'objectuid_post' => $this->config->get('objectuid_post'),
-      'newsletter' => $this->config->get('newsletter')
+      'objectuid_post' => $this->config->get('objectuid_post')
     ];
   }
 

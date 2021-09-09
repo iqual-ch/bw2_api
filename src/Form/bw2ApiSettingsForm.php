@@ -40,14 +40,14 @@ class bw2ApiSettingsForm extends ConfigFormBase implements ContainerInjectionInt
       '#description' => $this->t('The URL of bw2 API with protocol (https).'),
       '#required' => TRUE,
     ];
-    /** GPY: IS IT NEEDED? */
-    $form['newsletter'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Newsletter Group ID'),
-      '#default_value' => $config->get('newsletter'),
-      '#description' => $this->t('The newsletter group ID that will be used for bw2.'),
-      '#required' => TRUE,
-    ];
+    // /** GPY: IS IT NEEDED? */
+    // $form['newsletter'] = [
+    //   '#type' => 'textfield',
+    //   '#title' => $this->t('Newsletter Group ID'),
+    //   '#default_value' => $config->get('newsletter'),
+    //   '#description' => $this->t('The newsletter group ID that will be used for bw2.'),
+    //   '#required' => TRUE,
+    // ];
 
     $form['portaluid'] = [
       '#type' => 'textfield',
@@ -66,7 +66,7 @@ class bw2ApiSettingsForm extends ConfigFormBase implements ContainerInjectionInt
     ];
 
     $form['objectuid_post'] = [
-      #type' => 'textfield',
+      '#type' => 'textfield',
       '#title' => $this->t('Object UID for POST Requests'),
       '#default_value' => $config->get('objectuid_post'),
       '#description' => $this->t('The object ID that will be used for all POST / PUT / PATCH requests to bw2 API.'),
