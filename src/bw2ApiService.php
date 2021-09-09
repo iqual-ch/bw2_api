@@ -84,7 +84,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
     if ($response->getStatusCode() == '200' ) {
       \Drupal::logger('bw2_api')->notice('Users list retrieved from bw2');
       $data = json_decode($response->getBody(), true);
-      return $data['Result'];
+      return json_decode($data['Result'], true);
     }
     return FALSE;
   }
@@ -113,7 +113,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
     if ($response->getStatusCode() == '200' ) {
       \Drupal::logger('bw2_api')->notice('Countries list retrieved from bw2');
       $data = json_decode($response->getBody(), true);
-      return $data['Result'];
+      return json_decode($data['Result'], true);
     }
     return FALSE;
   }
@@ -142,7 +142,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
     if ($response->getStatusCode() == '200' ) {
       \Drupal::logger('bw2_api')->notice('Countries list retrieved from bw2');
       $data = json_decode($response->getBody(), true);
-      return $data['Result'];
+      return json_decode($data['Result'], true);
     }
     return FALSE;
   }
@@ -326,7 +326,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
         break;
     }
     if ($dimension_code){
-       foreach($codes['DataList'] as $lang){
+       foreach($codes['DataList'] as $key => $lang){
         if ($lang['Dimension_Code'] === $dimension_code ){
           $code = $lang['Dimension_ID'];
           break;
@@ -343,7 +343,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
     $codes = $this->getCountryInformation();
     $dimension_code = $countryCode;
     if ($dimension_code){
-       foreach($codes['DataList'] as $country){
+       foreach($codes['DataList'] as $key => $country){
         if ($country['Dimension_Code'] === $dimension_code ){
           $code = $country['Dimension_ID'];
           break;
@@ -358,7 +358,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
    */
   public function userExists($email){
     $users = $this->getContacts();
-    foreach($users['DataList'] as $user){
+    foreach($users['DataList'] as $key => $user){
       if ($user['Account_Email1'] === $email ){
         return $user['Account_ID'];
       }
