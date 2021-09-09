@@ -5,15 +5,12 @@ bw2_api.settings:
     base_url:
       type: string
       label: 'Base url'
-    # newsletter:
-    #   type: string
-    #   label: 'Newsletter'
-    portaluid:
+    portalguid:
       type: string
       label: 'Portal UID'
-    objectuid_get:
+    objectguid_get:
       type: string
       label: 'Object UID for the GET Requests'
-    objectuid_post:
+    objectguid_post:
       type: string
       label: 'Object UID for the POST / PATCH Requests'

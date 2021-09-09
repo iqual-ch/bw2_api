@@ -53,9 +53,9 @@ class bw2ApiService implements bw2ApiServiceInterface {
 
     $this->auth = [
       'baseUrl' => $this->config->get('base_url'),
-      'portaluid' => $this->config->get('portaluid'),
-      'objectuid_get' => $this->config->get('objectuid_get'),
-      'objectuid_post' => $this->config->get('objectuid_post')
+      'portalguid' => $this->config->get('portalguid'),
+      'objectguid_get' => $this->config->get('objectguid_get'),
+      'objectguid_post' => $this->config->get('objectguid_post')
     ];
   }
 
@@ -67,7 +67,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
       throw new \Exception("bw2 API not authorized.");
     }
 
-    $request_json = $this->getRequestJson('getUsers');
+    $request_json = $this->getRequestJson(null, 'getUsers');
     \Drupal::logger('bw2_api')->notice($request_json);
     // Create the http request to the bw2.
     $response = \Drupal::httpClient()->get($this->auth['baseUrl'], [
@@ -97,7 +97,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
       throw new \Exception("bw2 API not authorized.");
     }
 
-    $request_json = $this->getRequestJson('getCountries');
+    $request_json = $this->getRequestJson(null, 'getCountries');
     \Drupal::logger('bw2_api')->notice($request_json);
     // Create the http request to the bw2.
     $response = \Drupal::httpClient()->get($this->auth['baseUrl'], [
@@ -126,7 +126,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
       throw new \Exception("bw2 API not authorized.");
     }
 
-    $request_json = $this->getRequestJson('getLanguages');
+    $request_json = $this->getRequestJson(null, 'getLanguages');
     \Drupal::logger('bw2_api')->notice($request_json);
     // Create the http request to the bw2.
     $response = \Drupal::httpClient()->get($this->auth['baseUrl'], [
@@ -180,7 +180,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
       $responseData = json_decode($response->getBody(), true);
       \Drupal::logger('bw2_api')->notice($response->getBody());
       \Drupal::logger('bw2_api')->notice('User successfully created on bw2');
-      $user->set('field_iq_group_bw2_id', $responseData['Result']['ItemID']);
+      $data->set('field_iq_group_bw2_id', $responseData['Result']['ItemID']);
       return TRUE;
     }
     return FALSE;

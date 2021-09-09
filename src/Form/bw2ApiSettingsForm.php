@@ -40,35 +40,27 @@ class bw2ApiSettingsForm extends ConfigFormBase implements ContainerInjectionInt
       '#description' => $this->t('The URL of bw2 API with protocol (https).'),
       '#required' => TRUE,
     ];
-    // /** GPY: IS IT NEEDED? */
-    // $form['newsletter'] = [
-    //   '#type' => 'textfield',
-    //   '#title' => $this->t('Newsletter Group ID'),
-    //   '#default_value' => $config->get('newsletter'),
-    //   '#description' => $this->t('The newsletter group ID that will be used for bw2.'),
-    //   '#required' => TRUE,
-    // ];
 
-    $form['portaluid'] = [
+    $form['portalguid'] = [
       '#type' => 'textfield',
       '#title' => $this->t('BW2 Portal ID'),
-      '#default_value' => $config->get('portaluid'),
+      '#default_value' => $config->get('portalguid'),
       '#description' => $this->t('The portal uid that will be used to connect to bw2 API.'),
       '#required' => TRUE,
     ];
 
-    $form['objectuid_get'] = [
+    $form['objectguid_get'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Object UID for GET Requests'),
-      '#default_value' => $config->get('objectuid_get'),
+      '#default_value' => $config->get('objectguid_get'),
       '#description' => $this->t('The object ID that will be used for all GET requests to bw2 API.'),
       '#required' => TRUE,
     ];
 
-    $form['objectuid_post'] = [
+    $form['objectguid_post'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Object UID for POST Requests'),
-      '#default_value' => $config->get('objectuid_post'),
+      '#default_value' => $config->get('objectguid_post'),
       '#description' => $this->t('The object ID that will be used for all POST / PUT / PATCH requests to bw2 API.'),
       '#required' => TRUE,
     ];
@@ -84,10 +76,9 @@ class bw2ApiSettingsForm extends ConfigFormBase implements ContainerInjectionInt
     $form_state->cleanValues();
 
     $config->set('base_url', $form_state->getValue('base_url'));
-    $config->set('portaluid', $form_state->getValue('portaluid'));
-    $config->set('objectuid_get', $form_state->getValue('objectuid_get'));
-    $config->set('objectuid_post', $form_state->getValue('objectuid_post'));
-    $config->set('newsletter', $form_state->getValue('newsletter'));
+    $config->set('portalguid', $form_state->getValue('portalguid'));
+    $config->set('objectguid_get', $form_state->getValue('objectguid_get'));
+    $config->set('objectguid_post', $form_state->getValue('objectguid_post'));
 
     $config->save();
 
