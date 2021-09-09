@@ -29,15 +29,15 @@ interface bw2ApiServiceInterface {
 
   /**
    * @param string $email
-   * @param array $data
+   * @param entity $data
    *
    * @return mixed
    */
-  public function createContact($email, $data);
+  public function createContact($data);
 
   /**
    * @param integer $contact_id
-   * @param array $data
+   * @param entity $data
    * @param bool $createIfNotExists
    *
    * @return mixed
