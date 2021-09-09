@@ -358,7 +358,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
    */
   public function userExists($email){
     $users = $this->getContacts();
-    foreach($codes['DataList'] as $user){
+    foreach($users['DataList'] as $user){
       if ($user['Account_Email1'] === $email ){
         return $user['Account_ID'];
       }
