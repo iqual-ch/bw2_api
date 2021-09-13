@@ -80,7 +80,6 @@ class bw2ApiService implements bw2ApiServiceInterface {
       'body' => $request_json,
     ]);
 
-    //$this->logErrors($response);
     if ($response->getStatusCode() == '200' ) {
       \Drupal::logger('bw2_api')->notice('Users list retrieved from bw2');
       $data = json_decode($response->getBody(), true);
@@ -164,7 +163,6 @@ class bw2ApiService implements bw2ApiServiceInterface {
     }
    
     // $data['newsletter'] = !empty($data['preferences']) && in_array($this->auth['newsletter'], $data['preferences']) ? 1 : 0;
-    $request_json = $this->getRequestJson($data, 'registerProfile');
     // Create the http request to the bw2.
     $response = \Drupal::httpClient()->post($this->auth['baseUrl'], [
       'headers' => [
