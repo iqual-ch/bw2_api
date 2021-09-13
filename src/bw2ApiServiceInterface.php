@@ -29,7 +29,7 @@ interface bw2ApiServiceInterface {
 
   /**
    * @param string $email
-   * @param entity $data
+   * @param array $data
    *
    * @return mixed
    */
@@ -37,7 +37,7 @@ interface bw2ApiServiceInterface {
 
   /**
    * @param integer $contact_id
-   * @param entity $data
+   * @param array $data
    * @param bool $createIfNotExists
    *
    * @return mixed

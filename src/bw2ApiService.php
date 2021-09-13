@@ -156,7 +156,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
       throw new \Exception("bw2 API not authorized.");
     }
     // if the user already exists we update it instead.
-    if ($user_id = $this->userExists($data->getEmail())){
+    if ($user_id = $this->userExists($data['Account_Email1'])){
       return $this->editContact($user_id, $data);
     }
     else{
@@ -180,8 +180,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
       $responseData = json_decode($response->getBody(), true);
       \Drupal::logger('bw2_api')->notice($response->getBody());
       \Drupal::logger('bw2_api')->notice('User successfully created on bw2');
-      $data->set('field_iq_group_bw2_id', $responseData['Result']['ItemID']);
-      return TRUE;
+      return $responseData['Result']['ItemID'];
     }
     return FALSE;
   }
@@ -246,21 +245,19 @@ class bw2ApiService implements bw2ApiServiceInterface {
       ];
     }
     elseif ($requestOperation == 'createUser') {
-      $bw2Data = $this->convertDataForBw2($data);
       $requestArray = [
         'Data' => [
           'itemWriterCode' => 'GastItemWriter',
-          'ItemProperties' => $bw2Data
+          'ItemProperties' => $data
         ]
       ];
     }
     elseif ($requestOperation == 'updateUser') {
-      $bw2Data = $this->convertDataForBw2($data);
       $requestArray = [
         'Data' => [
           'itemWriterCode' => 'GastItemWriter',
           'Item_ID' => $contact_id,
-          'ItemProperties' => $bw2Data
+          'ItemProperties' => $data
         ]
       ];
     }
@@ -268,40 +265,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
     return $request_json;
   }
 
-  /**
-   * Helper function to convert the user data to the bw2 format.
-   */
-  public function convertDataForBw2($user){
-    $langCode = $this->getLanguageCode($user->getPreferredLangcode());
-    $countryCode = $this->getCountryCode(reset($user->get('field_iq_user_base_address')->getValue())['country_code']);
-    $profile_data = [
-      'Account_Active' => $user->status->value,
-      // 'Account_Salutation' => reset($user->get('field_iq_user_base_address')->getValue())['given_name'],
-      // 'Account_Drupal_ID' => $user->id(),
-      'Account_FirstName' => reset($user->get('field_iq_user_base_address')->getValue())['given_name'],
-      'Account_LastName' => reset($user->get('field_iq_user_base_address')->getValue())['family_name'],
-      // 'Account_AddressLine1' => reset($user->get('field_iq_user_base_address')->getValue())['address_line1'],
-      'Account_Street' => reset($user->get('field_iq_user_base_address')->getValue())['address_line1'],
-      // 'Account_POBox' => reset($user->get('field_iq_user_base_address')->getValue())['street'],
-      'Account_PostalCode' => reset($user->get('field_iq_user_base_address')->getValue())['postal_code'],
-      'Account_City' => reset($user->get('field_iq_user_base_address')->getValue())['locality'],
-      'Account_Country_Dimension_ID' => $countryCode,
-      'Account_Email1' => $user->getEmail(),
-      'Account_Language_Dimension_ID' => $langCode
-    ];
-
-    if ($user->hasField('field_iq_group_preferences') && !$user->get('field_iq_group_preferences')->isEmpty()) {
-      $profile_data['Visitor_AllowEmail'] = array_filter(array_column($user->field_iq_group_preferences->getValue(), 'target_id'));
-    }
-    // if ($user->hasField('field_iq_group_bw2_id') && !empty($user->get('field_iq_group_bw2_id')->getValue())) {
-    //   $this->bw2ApiService->editContact($user->field_iq_group_bw2_id->value, $profile_data);
-    // } else {
-    //   $bw2_id = $this->bw2ApiService->createContact($email, $profile_data);
-    //   $user->set('field_iq_group_bw2_id', $bw2_id);
-    // }
-    return $profile_data;
-  }
-
+  
   /**
    * Helper function to convert the user language to the correct bw2 ID.
    */
