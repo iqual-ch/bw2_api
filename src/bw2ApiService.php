@@ -162,7 +162,6 @@ class bw2ApiService implements bw2ApiServiceInterface {
       $request_json = $this->getRequestJson($data, 'createUser');
     }
    
-    // $data['newsletter'] = !empty($data['preferences']) && in_array($this->auth['newsletter'], $data['preferences']) ? 1 : 0;
     // Create the http request to the bw2.
     $response = \Drupal::httpClient()->post($this->auth['baseUrl'], [
       'headers' => [
@@ -175,10 +174,11 @@ class bw2ApiService implements bw2ApiServiceInterface {
     ]);
 
     if ($response->getStatusCode() == '200') {
-      $responseData = json_decode($response->getBody(), true);
       \Drupal::logger('bw2_api')->notice($response->getBody());
       \Drupal::logger('bw2_api')->notice('User successfully created on bw2');
-      return $responseData['Result']['ItemID'];
+      $responseData = json_decode($response->getBody(), true);
+      $result = json_decode($responseData['Result'], true);
+      return $result['ItemID'];
     }
     return FALSE;
   }
@@ -190,8 +190,6 @@ class bw2ApiService implements bw2ApiServiceInterface {
     if (empty($this->auth)) {
       throw new \Exception("bw2 API not authorized.");
     }
-    // $data['newsletter'] = !empty($data['preferences']) && in_array($this->auth['newsletter'], $data['preferences']) ? 1 : 0;
-
 
     $request_json = $this->getRequestJson($data, 'updateUser', $contact_id);
     \Drupal::logger('bw2_api')->notice($request_json);
