@@ -55,8 +55,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
       'baseUrl' => $this->config->get('base_url'),
       'portalguid' => $this->config->get('portalguid'),
       'objectguid_get' => $this->config->get('objectguid_get'),
-      'objectguid_post' => $this->config->get('objectguid_post'),
-      'current_item_version' => $this->config->get('current_item_version')
+      'objectguid_post' => $this->config->get('objectguid_post')
     ];
   }
 
@@ -84,7 +83,12 @@ class bw2ApiService implements bw2ApiServiceInterface {
     if ($response->getStatusCode() == '200' ) {
       \Drupal::logger('bw2_api')->notice('Users list retrieved from bw2');
       $data = json_decode($response->getBody(), true);
-      return json_decode($data['Result'], true);
+      $result = json_decode($data['Result'], true);
+      if ($result['MaxItemVersion'] !== $this->config->get('current_item_version')){
+        $this->config->set('current_item_version', $result['MaxItemVersion']);
+        $this->config->save();
+      }
+      return $result;
     }
     return FALSE;
   }
