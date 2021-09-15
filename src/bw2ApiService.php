@@ -85,8 +85,9 @@ class bw2ApiService implements bw2ApiServiceInterface {
       $data = json_decode($response->getBody(), true);
       $result = json_decode($data['Result'], true);
       if ($result['MaxItemVersion'] !== $this->config->get('current_item_version')){
-        $this->config->set('current_item_version', $result['MaxItemVersion']);
-        $this->config->save();
+        $config = \Drupal::getContainer()->get('config.factory')->getEditable('bw2_api.settings');
+        $config->set('current_item_version', $result['MaxItemVersion']);
+        $config->save();
       }
       return $result;
     }
@@ -166,7 +167,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
     else{
       $request_json = $this->getRequestJson($data, 'createUser');
     }
-   
+
     // Create the http request to the bw2.
     $response = \Drupal::httpClient()->post($this->auth['baseUrl'], [
       'headers' => [
@@ -179,11 +180,13 @@ class bw2ApiService implements bw2ApiServiceInterface {
     ]);
 
     if ($response->getStatusCode() == '200') {
-      \Drupal::logger('bw2_api')->notice($response->getBody());
-      \Drupal::logger('bw2_api')->notice('User successfully created on bw2');
       $responseData = json_decode($response->getBody(), true);
-      $result = json_decode($responseData['Result'], true);
-      return $result['ItemID'];
+      if ($responseData['MessageDescription'] === "SUCCESS"){
+        \Drupal::logger('bw2_api')->notice($response->getBody());
+        \Drupal::logger('bw2_api')->notice('User successfully created on bw2');
+        $result = json_decode($responseData['Result'], true);
+        return $result['ItemID'];
+      }
     }
     return FALSE;
   }
@@ -210,9 +213,12 @@ class bw2ApiService implements bw2ApiServiceInterface {
     ]);
 
     if ($response->getStatusCode() == '200') {
-      \Drupal::logger('bw2_api')->notice($response->getBody());
-      \Drupal::logger('bw2_api')->notice('User successfully updated on bw2');
-      return TRUE;
+      $responseData = json_decode($response->getBody(), true);
+      if ($responseData['MessageDescription'] === "SUCCESS"){
+        \Drupal::logger('bw2_api')->notice($response->getBody());
+        \Drupal::logger('bw2_api')->notice('User successfully updated on bw2');
+        return TRUE;
+      }
     }
     return FALSE;
   }
@@ -266,7 +272,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
     return $request_json;
   }
 
-  
+
   /**
    * Helper function to convert the user language to the correct bw2 ID.
    */
