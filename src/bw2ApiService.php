@@ -84,11 +84,6 @@ class bw2ApiService implements bw2ApiServiceInterface {
       \Drupal::logger('bw2_api')->notice('Users list retrieved from bw2');
       $data = json_decode($response->getBody(), true);
       $result = json_decode($data['Result'], true);
-      if ($result['MaxItemVersion'] !== $this->config->get('current_item_version')){
-        $config = \Drupal::getContainer()->get('config.factory')->getEditable('bw2_api.settings');
-        $config->set('current_item_version', $result['MaxItemVersion']);
-        $config->save();
-      }
       return $result;
     }
     return FALSE;
