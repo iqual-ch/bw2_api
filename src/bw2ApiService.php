@@ -55,19 +55,20 @@ class bw2ApiService implements bw2ApiServiceInterface {
       'baseUrl' => $this->config->get('base_url'),
       'portalguid' => $this->config->get('portalguid'),
       'objectguid_get' => $this->config->get('objectguid_get'),
-      'objectguid_post' => $this->config->get('objectguid_post')
+      'objectguid_post' => $this->config->get('objectguid_post'),
+      'current_item_version' => $this->config->get('current_item_version')
     ];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getContacts() {
+  public function getContacts($max_item_version = false) {
     if (empty($this->auth)) {
       throw new \Exception("bw2 API not authorized.");
     }
 
-    $request_json = $this->getRequestJson(null, 'getUsers');
+    $request_json = $this->getRequestJson(null, 'getUsers', $max_item_version);
     \Drupal::logger('bw2_api')->notice($request_json);
     // Create the http request to the bw2.
     $response = \Drupal::httpClient()->get($this->auth['baseUrl'], [
@@ -215,11 +216,11 @@ class bw2ApiService implements bw2ApiServiceInterface {
   /**
    * Helper function to construct the json requests.
    */
-  protected function getRequestJson($data, $requestOperation, $contact_id = false) {
+  protected function getRequestJson($data, $requestOperation, $extra_param = false) {
     if ($requestOperation == 'getUsers') {
       $requestArray = [
         'Data' => [
-          'ItemVersion' => '0',
+          'ItemVersion' => ($extra_param) ? $extra_param : '0',
           'DataProviderCode' => 'GastData'
         ]
       ];
@@ -227,7 +228,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
     elseif ($requestOperation == 'getCountries') {
       $requestArray = [
         'Data' => [
-          'ItemVersion' => '0',
+          'ItemVersion' => ($extra_param) ? $extra_param : '0',
           'DataProviderCode' => 'CountryData'
         ]
       ];
@@ -235,7 +236,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
     elseif ($requestOperation == 'getLanguages') {
       $requestArray = [
         'Data' => [
-          'ItemVersion' => '0',
+          'ItemVersion' => ($extra_param) ? $extra_param : '0',
           'DataProviderCode' => 'LanguageData'
         ]
       ];
@@ -252,7 +253,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
       $requestArray = [
         'Data' => [
           'itemWriterCode' => 'GastItemWriter',
-          'Item_ID' => $contact_id,
+          'Item_ID' => $extra_param,
           'ItemProperties' => $data
         ]
       ];

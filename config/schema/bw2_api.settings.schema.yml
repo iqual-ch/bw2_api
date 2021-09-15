@@ -14,3 +14,6 @@ bw2_api.settings:
     objectguid_post:
       type: string
       label: 'Object UID for the POST / PATCH Requests'
+    current_item_version:
+      type: string
+      label: 'Latest version of the bw2 API'
