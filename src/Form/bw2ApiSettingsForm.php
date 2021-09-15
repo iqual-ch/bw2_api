@@ -65,6 +65,14 @@ class bw2ApiSettingsForm extends ConfigFormBase implements ContainerInjectionInt
       '#required' => TRUE,
     ];
 
+    $form['current_item_version'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Current Version of the API'),
+      '#default_value' => $config->get('current_item_version'),
+      '#description' => $this->t('Version of the API since last call. Allows to get only new or edited content since last call.'),
+      '#required' => TRUE,
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -79,6 +87,7 @@ class bw2ApiSettingsForm extends ConfigFormBase implements ContainerInjectionInt
     $config->set('portalguid', $form_state->getValue('portalguid'));
     $config->set('objectguid_get', $form_state->getValue('objectguid_get'));
     $config->set('objectguid_post', $form_state->getValue('objectguid_post'));
+    $config->set('current_item_version', $form_state->getValue('current_item_version'));
 
     $config->save();
 
