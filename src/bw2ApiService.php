@@ -62,6 +62,13 @@ class bw2ApiService implements bw2ApiServiceInterface {
   /**
    * {@inheritdoc}
    */
+  public function getCredentials() {
+    return $this->auth;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getContacts($max_item_version = false) {
     if (empty($this->auth)) {
       throw new \Exception("bw2 API not authorized.");
