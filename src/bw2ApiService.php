@@ -328,9 +328,10 @@ class bw2ApiService implements bw2ApiServiceInterface {
 
   /**
    * Helper function to check if user exist in bw2.
+   * We use the current_item_version to retrieve only the newly created users
    */
   public function userExists($email){
-    $users = $this->getContacts();
+    $users = $this->getContacts($this->config->get('current_item_version'));
     foreach($users['DataList'] as $key => $user){
       if ($user['Account_Email1'] === $email ){
         return $user['Account_ID'];
