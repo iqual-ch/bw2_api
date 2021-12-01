@@ -70,7 +70,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getContacts($max_item_version = false) {
+  public function getContacts($max_item_version = FALSE) {
     if (empty($this->getCredentials())) {
       throw new \Exception("bw2 API not authorized.");
     }
@@ -89,8 +89,8 @@ class bw2ApiService implements bw2ApiServiceInterface {
 
     if ($response->getStatusCode() == '200' ) {
       \Drupal::logger('bw2_api')->notice('Users list retrieved from bw2');
-      $data = json_decode($response->getBody(), true);
-      $result = json_decode($data['Result'], true);
+      $data = json_decode($response->getBody(), TRUE);
+      $result = json_decode($data['Result'], TRUE);
       return $result;
     }
     return FALSE;
@@ -118,8 +118,8 @@ class bw2ApiService implements bw2ApiServiceInterface {
 
     if ($response->getStatusCode() == '200' ) {
       \Drupal::logger('bw2_api')->notice('Countries list retrieved from bw2');
-      $data = json_decode($response->getBody(), true);
-      return json_decode($data['Result'], true);
+      $data = json_decode($response->getBody(), TRUE);
+      return json_decode($data['Result'], TRUE);
     }
     return FALSE;
   }
@@ -146,8 +146,8 @@ class bw2ApiService implements bw2ApiServiceInterface {
 
     if ($response->getStatusCode() == '200' ) {
       \Drupal::logger('bw2_api')->notice('Countries list retrieved from bw2');
-      $data = json_decode($response->getBody(), true);
-      return json_decode($data['Result'], true);
+      $data = json_decode($response->getBody(), TRUE);
+      return json_decode($data['Result'], TRUE);
     }
     return FALSE;
   }
@@ -160,9 +160,9 @@ class bw2ApiService implements bw2ApiServiceInterface {
     if (empty($this->getCredentials())) {
       throw new \Exception("bw2 API not authorized.");
     }
-    // if the user already exists we update it instead.
+    // if the user already exists in the CRM we update it instead with the correct AccountID.
     if ($user_id = $this->userExists($data['Account_Email1'])){
-      return $this->editContact($user_id, $data);
+      return $this->editContact($user_id, $data, TRUE);
     }
     else{
       $request_json = $this->getRequestJson($data, 'createUser');
@@ -180,10 +180,10 @@ class bw2ApiService implements bw2ApiServiceInterface {
     ]);
 
     if ($response->getStatusCode() == '200') {
-      $responseData = json_decode($response->getBody(), true);
+      $responseData = json_decode($response->getBody(), TRUE);
       if ($responseData['MessageDescription'] === "SUCCESS"){
         \Drupal::logger('bw2_api')->notice('User successfully created on bw2');
-        $result = json_decode($responseData['Result'], true);
+        $result = json_decode($responseData['Result'], TRUE);
         return $result['ItemID'];
       }
     }
@@ -193,7 +193,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function editContact($contact_id, $data, $createIfNotExists = false) {
+  public function editContact($contact_id, $data, $createIfNotExists = FALSE) {
     if (empty($this->getCredentials())) {
       throw new \Exception("bw2 API not authorized.");
     }
@@ -211,10 +211,10 @@ class bw2ApiService implements bw2ApiServiceInterface {
     ]);
 
     if ($response->getStatusCode() == '200') {
-      $responseData = json_decode($response->getBody(), true);
+      $responseData = json_decode($response->getBody(), TRUE);
       if ($responseData['MessageDescription'] === "SUCCESS"){
         \Drupal::logger('bw2_api')->notice('User successfully updated on bw2');
-        return TRUE;
+        return ($createIfNotExists) ? $contact_id : TRUE;
       }
     }
     return FALSE;
@@ -223,7 +223,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
   /**
    * Helper function to construct the json requests.
    */
-  protected function getRequestJson($data, $requestOperation, $extra_param = false) {
+  protected function getRequestJson($data, $requestOperation, $extra_param = FALSE) {
     if ($requestOperation == 'getUsers') {
       $requestArray = [
         'Data' => [
@@ -270,7 +270,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
         ]
       ];
     }
-    $request_json = json_encode($requestArray, true);
+    $request_json = json_encode($requestArray, TRUE);
     return $request_json;
   }
 
@@ -336,7 +336,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
         return $user['Account_ID'];
       }
     }
-    return false;
+    return FALSE;
   }
 
 }
