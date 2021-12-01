@@ -73,6 +73,14 @@ class bw2ApiSettingsForm extends ConfigFormBase implements ContainerInjectionInt
       '#required' => TRUE,
     ];
 
+    $form['password'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Passwort'),
+      '#default_value' => $config->get('password'),
+      '#description' => $this->t('Required for production.'),
+      '#required' => TRUE,
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -88,6 +96,7 @@ class bw2ApiSettingsForm extends ConfigFormBase implements ContainerInjectionInt
     $config->set('objectguid_get', $form_state->getValue('objectguid_get'));
     $config->set('objectguid_post', $form_state->getValue('objectguid_post'));
     $config->set('current_item_version', $form_state->getValue('current_item_version'));
+    $config->set('password', $form_state->getValue('password'));
 
     $config->save();
 

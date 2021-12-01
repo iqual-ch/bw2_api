@@ -45,6 +45,7 @@ class bw2ApiServiceTest extends KernelTestBase {
     $config->set('portalguid', '8e0a3bdd-4364-4ebd-b430-944e48d3ad7d');
     $config->set('objectguid_get', '5350cd9b-bc91-4a84-ac26-899c81754d4a');
     $config->set('objectguid_post', '833e08aa-1a98-4538-a05b-fb62b526cf22');
+    $config->set('password', 'Adp4VHck');
     $config->save();
     $this->bw2Api = $this->container->get('bw2_api');
   }
@@ -58,6 +59,7 @@ class bw2ApiServiceTest extends KernelTestBase {
     $this->assertTrue($config['portalguid'] == '8e0a3bdd-4364-4ebd-b430-944e48d3ad7d');
     $this->assertTrue($config['objectguid_get'] == '5350cd9b-bc91-4a84-ac26-899c81754d4a');
     $this->assertTrue($config['objectguid_post'] == '833e08aa-1a98-4538-a05b-fb62b526cf22');
+    $this->assertTrue($config['password'] == 'Adp4VHck');
   }
 
   /**

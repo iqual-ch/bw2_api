@@ -55,7 +55,8 @@ class bw2ApiService implements bw2ApiServiceInterface {
       'baseUrl' => $this->config->get('base_url'),
       'portalguid' => $this->config->get('portalguid'),
       'objectguid_get' => $this->config->get('objectguid_get'),
-      'objectguid_post' => $this->config->get('objectguid_post')
+      'objectguid_post' => $this->config->get('objectguid_post'),
+      'password' => $this->config->get('password'),
     ];
   }
 
@@ -70,18 +71,18 @@ class bw2ApiService implements bw2ApiServiceInterface {
    * {@inheritdoc}
    */
   public function getContacts($max_item_version = false) {
-    if (empty($this->auth)) {
+    if (empty($this->getCredentials())) {
       throw new \Exception("bw2 API not authorized.");
     }
 
     $request_json = $this->getRequestJson(null, 'getUsers', $max_item_version);
     // Create the http request to the bw2.
-    $response = \Drupal::httpClient()->get($this->auth['baseUrl'], [
+    $response = \Drupal::httpClient()->get($this->getCredentials()['baseUrl'], [
       'headers' => [
         'Content-type' => 'application/json',
         'requesttype' => 'string',
-        'objectguid' => $this->auth['objectguid_get'],
-        'portalguid' => $this->auth['portalguid']
+        'objectguid' => $this->getCredentials()['objectguid_get'],
+        'portalguid' => $this->getCredentials()['portalguid']
       ],
       'body' => $request_json,
     ]);
@@ -99,18 +100,18 @@ class bw2ApiService implements bw2ApiServiceInterface {
    * {@inheritdoc}
    */
   public function getCountryInformation() {
-    if (empty($this->auth)) {
+    if (empty($this->getCredentials())) {
       throw new \Exception("bw2 API not authorized.");
     }
 
     $request_json = $this->getRequestJson(null, 'getCountries');
     // Create the http request to the bw2.
-    $response = \Drupal::httpClient()->get($this->auth['baseUrl'], [
+    $response = \Drupal::httpClient()->get($this->getCredentials()['baseUrl'], [
       'headers' => [
         'Content-type' => 'application/json',
         'requesttype' => 'string',
-        'objectguid' => $this->auth['objectguid_get'],
-        'portalguid' => $this->auth['portalguid']
+        'objectguid' => $this->getCredentials()['objectguid_get'],
+        'portalguid' => $this->getCredentials()['portalguid']
       ],
       'body' => $request_json,
     ]);
@@ -127,18 +128,18 @@ class bw2ApiService implements bw2ApiServiceInterface {
    * {@inheritdoc}
    */
   public function getLanguageInformation() {
-    if (empty($this->auth)) {
+    if (empty($this->getCredentials())) {
       throw new \Exception("bw2 API not authorized.");
     }
 
     $request_json = $this->getRequestJson(null, 'getLanguages');
     // Create the http request to the bw2.
-    $response = \Drupal::httpClient()->get($this->auth['baseUrl'], [
+    $response = \Drupal::httpClient()->get($this->getCredentials()['baseUrl'], [
       'headers' => [
         'Content-type' => 'application/json',
         'requesttype' => 'string',
-        'objectguid' => $this->auth['objectguid_get'],
-        'portalguid' => $this->auth['portalguid']
+        'objectguid' => $this->getCredentials()['objectguid_get'],
+        'portalguid' => $this->getCredentials()['portalguid']
       ],
       'body' => $request_json,
     ]);
@@ -156,7 +157,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
    * {@inheritdoc}
    */
   public function createContact($data) {
-    if (empty($this->auth)) {
+    if (empty($this->getCredentials())) {
       throw new \Exception("bw2 API not authorized.");
     }
     // if the user already exists we update it instead.
@@ -168,12 +169,12 @@ class bw2ApiService implements bw2ApiServiceInterface {
     }
 
     // Create the http request to the bw2.
-    $response = \Drupal::httpClient()->post($this->auth['baseUrl'], [
+    $response = \Drupal::httpClient()->post($this->getCredentials()['baseUrl'], [
       'headers' => [
         'Content-type' => 'application/json',
         'requesttype' => 'string',
-        'objectguid' => $this->auth['objectguid_post'],
-        'portalguid' => $this->auth['portalguid']
+        'objectguid' => $this->getCredentials()['objectguid_post'],
+        'portalguid' => $this->getCredentials()['portalguid']
       ],
       'body' => $request_json,
     ]);
@@ -193,18 +194,18 @@ class bw2ApiService implements bw2ApiServiceInterface {
    * {@inheritdoc}
    */
   public function editContact($contact_id, $data, $createIfNotExists = false) {
-    if (empty($this->auth)) {
+    if (empty($this->getCredentials())) {
       throw new \Exception("bw2 API not authorized.");
     }
 
     $request_json = $this->getRequestJson($data, 'updateUser', $contact_id);
     // Create the http request to the bw2.
-    $response = \Drupal::httpClient()->post($this->auth['baseUrl'], [
+    $response = \Drupal::httpClient()->post($this->getCredentials()['baseUrl'], [
       'headers' => [
         'Content-type' => 'application/json',
         'requesttype' => 'string',
-        'objectguid' => $this->auth['objectguid_post'],
-        'portalguid' => $this->auth['portalguid']
+        'objectguid' => $this->getCredentials()['objectguid_post'],
+        'portalguid' => $this->getCredentials()['portalguid']
       ],
       'body' => $request_json,
     ]);
@@ -227,7 +228,8 @@ class bw2ApiService implements bw2ApiServiceInterface {
       $requestArray = [
         'Data' => [
           'ItemVersion' => ($extra_param) ? $extra_param : '0',
-          'DataProviderCode' => 'GastData'
+          'DataProviderCode' => 'GastData',
+          'Password' => $this->getCredentials()['password']
         ]
       ];
     }
@@ -235,7 +237,8 @@ class bw2ApiService implements bw2ApiServiceInterface {
       $requestArray = [
         'Data' => [
           'ItemVersion' => ($extra_param) ? $extra_param : '0',
-          'DataProviderCode' => 'CountryData'
+          'DataProviderCode' => 'CountryData',
+          'Password' => $this->getCredentials()['password']
         ]
       ];
     }
@@ -243,7 +246,8 @@ class bw2ApiService implements bw2ApiServiceInterface {
       $requestArray = [
         'Data' => [
           'ItemVersion' => ($extra_param) ? $extra_param : '0',
-          'DataProviderCode' => 'LanguageData'
+          'DataProviderCode' => 'LanguageData',
+          'Password' => $this->getCredentials()['password']
         ]
       ];
     }
@@ -251,7 +255,8 @@ class bw2ApiService implements bw2ApiServiceInterface {
       $requestArray = [
         'Data' => [
           'itemWriterCode' => 'GastItemWriter',
-          'ItemProperties' => $data
+          'ItemProperties' => $data,
+          'Password' => $this->getCredentials()['password']
         ]
       ];
     }
@@ -260,7 +265,8 @@ class bw2ApiService implements bw2ApiServiceInterface {
         'Data' => [
           'itemWriterCode' => 'GastItemWriter',
           'Item_ID' => $extra_param,
-          'ItemProperties' => $data
+          'ItemProperties' => $data,
+          'Password' => $this->getCredentials()['password']
         ]
       ];
     }
