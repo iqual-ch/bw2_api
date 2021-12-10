@@ -117,7 +117,6 @@ class bw2ApiService implements bw2ApiServiceInterface {
     ]);
 
     if ($response->getStatusCode() == '200' ) {
-      \Drupal::logger('bw2_api')->notice('Countries list retrieved from bw2');
       $data = json_decode($response->getBody(), TRUE);
       return json_decode($data['Result'], TRUE);
     }
@@ -145,7 +144,6 @@ class bw2ApiService implements bw2ApiServiceInterface {
     ]);
 
     if ($response->getStatusCode() == '200' ) {
-      \Drupal::logger('bw2_api')->notice('Countries list retrieved from bw2');
       $data = json_decode($response->getBody(), TRUE);
       return json_decode($data['Result'], TRUE);
     }
