@@ -10,3 +10,4 @@ This is an API module only. Following modules use this to provide further functi
 
 * Add the module as usual and activate.
 * Configure the API under /admin/config/services/bw2-api
+* All informations are available on lastpass notice GCB - BW2 API Portal ID
