@@ -67,6 +67,24 @@ class bw2ApiService implements bw2ApiServiceInterface {
     return $this->auth;
   }
 
+  public function getGetHeaders() {
+    return [
+      'Content-type' => 'application/json',
+      'requesttype' => 'string',
+      'objectguid' => $this->getCredentials()['objectguid_get'],
+      'portalguid' => $this->getCredentials()['portalguid'],
+    ];
+  }
+
+  public function getPostHeaders() {
+    return [
+      'Content-type' => 'application/json',
+      'requesttype' => 'string',
+      'objectguid' => $this->getCredentials()['objectguid_post'],
+      'portalguid' => $this->getCredentials()['portalguid'],
+    ];
+  }
+
   /**
    * {@inheritdoc}
    */
@@ -78,12 +96,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
     $request_json = $this->getRequestJson(null, 'getUsers', $max_item_version);
     // Create the http request to the bw2.
     $response = \Drupal::httpClient()->get($this->getCredentials()['baseUrl'], [
-      'headers' => [
-        'Content-type' => 'application/json',
-        'requesttype' => 'string',
-        'objectguid' => $this->getCredentials()['objectguid_get'],
-        'portalguid' => $this->getCredentials()['portalguid']
-      ],
+      'headers' => $this->getGetHeaders(),
       'body' => $request_json,
     ]);
 
@@ -107,12 +120,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
     $request_json = $this->getRequestJson(null, 'getCountries');
     // Create the http request to the bw2.
     $response = \Drupal::httpClient()->get($this->getCredentials()['baseUrl'], [
-      'headers' => [
-        'Content-type' => 'application/json',
-        'requesttype' => 'string',
-        'objectguid' => $this->getCredentials()['objectguid_get'],
-        'portalguid' => $this->getCredentials()['portalguid']
-      ],
+      'headers' => $this->getGetHeaders(),
       'body' => $request_json,
     ]);
 
@@ -134,12 +142,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
     $request_json = $this->getRequestJson(null, 'getLanguages');
     // Create the http request to the bw2.
     $response = \Drupal::httpClient()->get($this->getCredentials()['baseUrl'], [
-      'headers' => [
-        'Content-type' => 'application/json',
-        'requesttype' => 'string',
-        'objectguid' => $this->getCredentials()['objectguid_get'],
-        'portalguid' => $this->getCredentials()['portalguid']
-      ],
+      'headers' => $this->getGetHeaders(),
       'body' => $request_json,
     ]);
 
@@ -168,12 +171,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
 
     // Create the http request to the bw2.
     $response = \Drupal::httpClient()->post($this->getCredentials()['baseUrl'], [
-      'headers' => [
-        'Content-type' => 'application/json',
-        'requesttype' => 'string',
-        'objectguid' => $this->getCredentials()['objectguid_post'],
-        'portalguid' => $this->getCredentials()['portalguid']
-      ],
+      'headers' => $this->getPostHeaders(),
       'body' => $request_json,
     ]);
 
@@ -199,12 +197,7 @@ class bw2ApiService implements bw2ApiServiceInterface {
     $request_json = $this->getRequestJson($data, 'updateUser', $contact_id);
     // Create the http request to the bw2.
     $response = \Drupal::httpClient()->post($this->getCredentials()['baseUrl'], [
-      'headers' => [
-        'Content-type' => 'application/json',
-        'requesttype' => 'string',
-        'objectguid' => $this->getCredentials()['objectguid_post'],
-        'portalguid' => $this->getCredentials()['portalguid']
-      ],
+      'headers' => $this->getPostHeaders(),
       'body' => $request_json,
     ]);
 
