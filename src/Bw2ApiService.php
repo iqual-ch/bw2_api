@@ -212,7 +212,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     }
 
     // Create the http request to the bw2.
-    $response = $this->client->get('', [
+    $response = $this->client->post('', [
       'headers' => $this->getPostHeaders(),
       'body' => $request_json,
     ]);
@@ -238,7 +238,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
 
     $request_json = $this->getRequestJson($data, 'updateUser', $contact_id);
     // Create the http request to the bw2.
-    $response = $this->client->get('', [
+    $response = $this->client->post('', [
       'headers' => $this->getPostHeaders(),
       'body' => $request_json,
     ]);
