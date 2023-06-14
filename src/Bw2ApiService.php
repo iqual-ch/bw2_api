@@ -82,7 +82,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     $this->request = $request_stack->getCurrentRequest();
     $this->config = $config_factory->get('bw2_api.settings');
     $this->client = $http_client_factory->fromOptions([
-      'base_uri' => $this->getConfig('base_url'),
+      'base_uri' => $this->config->get('base_url'),
     ]);
     $this->logger = $loggerChannelFactory->get('bw2_api');
 
