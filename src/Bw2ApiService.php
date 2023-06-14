@@ -7,31 +7,36 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Class Bw2ApiService.
- * 
+ * API Client to get and post data to bW2.
+ *
  * @package Drupal\bw2_api
  */
 class Bw2ApiService implements Bw2ApiServiceInterface {
 
   /**
+   * The client factory to create the client with the configuration.
+   *
+   * @var \Drupal\Core\Http\ClientFactory
+   */
+  protected $httpClientFactory;
+
+  /**
    * The entity type manager.
-   * 
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   *   
    */
   protected $entityTypeManager;
 
   /**
    * The immutable entity clone settings configuration entity.
-   * 
+   *
    * @var \Drupal\Core\Config\ImmutableConfig
-   *   
    */
   protected $config;
 
   /**
    * The current request.
-   * 
+   *
    * @var \Symfony\Component\HttpFoundation\Request
    */
   protected $request;
@@ -46,7 +51,9 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
 
   /**
    * Bw2ApiService constructor.
-   *
+   * 
+   * @param \Drupal\Core\Http\ClientFactory $http_client_factory
+   *   The Http Client factory.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -55,16 +62,19 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
    *   The current request stack.
    */
   public function __construct(
+    ClientFactory $http_client_factory,
     EntityTypeManagerInterface $entity_type_manager,
     ConfigFactoryInterface $config_factory,
     RequestStack $request_stack
- ) {
+  ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->request = $request_stack->getCurrentRequest();
     $this->config = $config_factory->get('bw2_api.settings');
+    $this->client = $http_client_factory->fromOptions([
+      'base_uri' => $this->getConfig('base_url'),
+    ]);
 
     $this->auth = [
-      'baseUrl' => $this->config->get('base_url'),
       'portalguid' => $this->config->get('portalguid'),
       'objectguid_get' => $this->config->get('objectguid_get'),
       'objectguid_post' => $this->config->get('objectguid_post'),
@@ -79,7 +89,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     return $this->auth;
   }
 
-  /** 
+  /**
    * Prepares an array of headers for GET requests.
    */
   public function getGetHeaders() {
@@ -91,7 +101,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     ];
   }
 
-  /** 
+  /**
    * Prepares an array of headers for POST requests.
    */
   public function getPostHeaders() {
@@ -113,7 +123,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
 
     $request_json = $this->getRequestJson(NULL, 'getUsers', $max_item_version);
     // Create the http request to the bw2.
-    $response = \Drupal::httpClient()->get($this->getCredentials()['baseUrl'], [
+    $response = $this->client->get('', [
       'headers' => $this->getGetHeaders(),
       'body' => $request_json,
     ]);
@@ -137,7 +147,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
 
     $request_json = $this->getRequestJson(NULL, 'getCountries');
     // Create the http request to the bw2.
-    $response = \Drupal::httpClient()->get($this->getCredentials()['baseUrl'], [
+    $response = $this->client->get('', [
       'headers' => $this->getGetHeaders(),
       'body' => $request_json,
     ]);
@@ -159,7 +169,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
 
     $request_json = $this->getRequestJson(NULL, 'getLanguages');
     // Create the http request to the bw2.
-    $response = \Drupal::httpClient()->get($this->getCredentials()['baseUrl'], [
+    $response = $this->client->get('', [
       'headers' => $this->getGetHeaders(),
       'body' => $request_json,
     ]);
@@ -178,10 +188,10 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     if (empty($this->getCredentials())) {
       throw new \Exception("bw2 API not authorized.");
     }
-    /* 
-     * If the user already exists in the CRM 
+    /*
+     * If the user already exists in the CRM
      * we update it instead with the correct AccountID.
-     */ 
+     */
     if ($user_id = $this->userExists($data['Account_Email1'])) {
       return $this->editContact($user_id, $data, TRUE);
     }
@@ -190,7 +200,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     }
 
     // Create the http request to the bw2.
-    $response = \Drupal::httpClient()->post($this->getCredentials()['baseUrl'], [
+    $response = $this->client->get('', [
       'headers' => $this->getPostHeaders(),
       'body' => $request_json,
     ]);
@@ -216,7 +226,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
 
     $request_json = $this->getRequestJson($data, 'updateUser', $contact_id);
     // Create the http request to the bw2.
-    $response = \Drupal::httpClient()->post($this->getCredentials()['baseUrl'], [
+    $response = $this->client->get('', [
       'headers' => $this->getPostHeaders(),
       'body' => $request_json,
     ]);
@@ -295,24 +305,30 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
       case 'de':
         $dimension_code = "D";
         break;
+
       case 'fr':
         $dimension_code = "F";
         break;
+
       case 'en':
         $dimension_code = "E";
         break;
+
       case 'it':
         $dimension_code = "I";
         break;
+
       case 'es':
         $dimension_code = "S";
         break;
+
     }
     if ($dimension_code) {
-       foreach ($codes['DataList'] as $key => $lang) {
+      foreach ($codes['DataList'] as $key => $lang) {
         if ($lang['Dimension_Code'] === $dimension_code) {
           $code = $lang['Dimension_ID'];
           break;
+  
         }
       }
     }
@@ -326,7 +342,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     $codes = $this->getCountryInformation();
     $dimension_code = $countryCode;
     if ($dimension_code) {
-       foreach ($codes['DataList'] as $key => $country) {
+      foreach ($codes['DataList'] as $country) {
         if ($country['Dimension_Code'] === $dimension_code) {
           $code = $country['Dimension_ID'];
           break;
@@ -338,12 +354,13 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
 
   /**
    * Helper function to check if user exist in bw2.
+   * 
    * We use the current_item_version to retrieve 
    * only the newly created users.
    */
   public function userExists($email) {
     $users = $this->getContacts($this->config->get('current_item_version'));
-    foreach ($users['DataList'] as $key => $user) {
+    foreach ($users['DataList'] as $user) {
       if ($user['Account_Email1'] === $email) {
         return $user['Account_ID'];
       }

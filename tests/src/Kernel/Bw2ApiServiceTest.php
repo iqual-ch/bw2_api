@@ -6,7 +6,7 @@ use Drupal\KernelTests\KernelTestBase;
 
 /**
  * Test class for Bw2 API.
- * 
+ *
  * @coversDefaultClass \Drupal\bw2_api\Bw2ApiService
  * @group bw2_api
  */
@@ -21,7 +21,7 @@ class Bw2ApiServiceTest extends KernelTestBase {
 
   /**
    * The config factory.
-   * 
+   *
    * @var \Drupal\Core\Config\ConfigFactory
    */
   protected $configFactory;
@@ -117,20 +117,20 @@ class Bw2ApiServiceTest extends KernelTestBase {
    */
   public function getNewUserData() {
     return [
-        'Account_Active' => TRUE,
-        'Account_Salutation' => 'Herr',
-        'Account_FirstName' => 'Unit Tester',
-        'Account_LastName' => 'Drupal',
-        'Account_AddressLine1' => 'address_line1',
-        'Account_Street' => 'address_line2',
-        'Account_POBox' => 'POBox',
-        'Account_PostalCode' => '3007',
-        'Account_City' => 'Bern',
-        'Account_Country_Dimension_ID' => -2147483512,
-        'Account_Email1' => 'unit.tester_' . rand() . '@drupal.ch',
-        'Account_Language_Dimension_ID' => -2147301090,
-        'Visitor_AllowEmail' => FALSE,
-        'Account_Birthday' => '2000-01-01',
+      'Account_Active' => TRUE,
+      'Account_Salutation' => 'Herr',
+      'Account_FirstName' => 'Unit Tester',
+      'Account_LastName' => 'Drupal',
+      'Account_AddressLine1' => 'address_line1',
+      'Account_Street' => 'address_line2',
+      'Account_POBox' => 'POBox',
+      'Account_PostalCode' => '3007',
+      'Account_City' => 'Bern',
+      'Account_Country_Dimension_ID' => -2147483512,
+      'Account_Email1' => 'unit.tester_' . rand() . '@drupal.ch',
+      'Account_Language_Dimension_ID' => -2147301090,
+      'Visitor_AllowEmail' => FALSE,
+      'Account_Birthday' => '2000-01-01',
     ];
   }
 
@@ -139,20 +139,20 @@ class Bw2ApiServiceTest extends KernelTestBase {
    */
   public function getExistingUserData() {
     return [
-        'Account_Active' => TRUE,
-        'Account_Salutation' => 'Herr',
-        'Account_FirstName' => 'Unit Tester',
-        'Account_LastName' => 'Drupal',
-        'Account_AddressLine1' => 'address_line1',
-        'Account_Street' => 'address_line2',
-        'Account_POBox' => 'POBox',
-        'Account_PostalCode' => '3007',
-        'Account_City' => 'Bern',
-        'Account_Country_Dimension_ID' => -2147483512,
-        'Account_Email1' => 'unit.tester@drupal.ch',
-        'Account_Language_Dimension_ID' => -2147301090,
-        'Visitor_AllowEmail' => FALSE,
-        'Account_Birthday' => '2000-01-01',
+      'Account_Active' => TRUE,
+      'Account_Salutation' => 'Herr',
+      'Account_FirstName' => 'Unit Tester',
+      'Account_LastName' => 'Drupal',
+      'Account_AddressLine1' => 'address_line1',
+      'Account_Street' => 'address_line2',
+      'Account_POBox' => 'POBox',
+      'Account_PostalCode' => '3007',
+      'Account_City' => 'Bern',
+      'Account_Country_Dimension_ID' => -2147483512,
+      'Account_Email1' => 'unit.tester@drupal.ch',
+      'Account_Language_Dimension_ID' => -2147301090,
+      'Visitor_AllowEmail' => FALSE,
+      'Account_Birthday' => '2000-01-01',
     ];
   }
 

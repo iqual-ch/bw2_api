@@ -3,7 +3,7 @@
 namespace Drupal\bw2_api;
 
 /**
- * Interface Bw2ApiServiceInterface
+ * Interface describing method available for the Bw2 API Client.
  *
  * @package Drupal\bw2_api
  */
@@ -27,7 +27,7 @@ interface Bw2ApiServiceInterface {
 
   /**
    * Get language codes from bw2.
-   * 
+   *
    * @return array
    *   An array of language codes.
    */
@@ -35,19 +35,19 @@ interface Bw2ApiServiceInterface {
 
   /**
    * Create a new contact in bw2.
-   * 
+   *
    * @param array $data
    *   An array of user data.
    *
    * @return mixed
    *   The bw2 id if creation was successfull or FALSE.
    */
-  public function createContact($data);
+  public function createContact(array $data);
 
   /**
    * Update an existing contact in bw2.
-   * 
-   * @param integer $contact_id
+   *
+   * @param int $contact_id
    *   The bw2 unique user id.
    * @param array $data
    *   An array of user data.
@@ -57,6 +57,6 @@ interface Bw2ApiServiceInterface {
    * @return mixed
    *   The bw2 id if update was successfull or FALSE.
    */
-  public function editContact($contact_id, $data, $createIfNotExists);
+  public function editContact(int $contact_id, array $data, bool $createIfNotExists);
 
 }
