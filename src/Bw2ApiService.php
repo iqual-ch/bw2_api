@@ -4,6 +4,7 @@ namespace Drupal\bw2_api;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Logger\LoggerChannelInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -42,16 +43,22 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
   protected $request;
 
   /**
+   * The Logger channel Factory.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelInterface
+   */
+  protected $logger;
+
+  /**
    * An array with credentials.
-   * 
+   *
    * @var array
-   *   
    */
   protected $auth;
 
   /**
    * Bw2ApiService constructor.
-   * 
+   *
    * @param \Drupal\Core\Http\ClientFactory $http_client_factory
    *   The Http Client factory.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -60,12 +67,15 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
    *   The config factory.
    * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
    *   The current request stack.
+   * @param \Drupal\Core\Logger\LoggerChannelFactory $loggerChannelFactory
+   *   The logger channel factory.
    */
   public function __construct(
     ClientFactory $http_client_factory,
     EntityTypeManagerInterface $entity_type_manager,
     ConfigFactoryInterface $config_factory,
-    RequestStack $request_stack
+    RequestStack $request_stack,
+    LoggerChannelFactory $loggerChannelFactory
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->request = $request_stack->getCurrentRequest();
@@ -73,6 +83,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     $this->client = $http_client_factory->fromOptions([
       'base_uri' => $this->getConfig('base_url'),
     ]);
+    $this->logger = $loggerChannelFactory->get('bw2_api');
 
     $this->auth = [
       'portalguid' => $this->config->get('portalguid'),
@@ -129,7 +140,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     ]);
 
     if ($response->getStatusCode() == '200') {
-      \Drupal::logger('bw2_api')->notice('Users list retrieved from bw2');
+      $this->logger->notice('Users list retrieved from bw2');
       $data = json_decode($response->getBody(), TRUE);
       $result = json_decode($data['Result'], TRUE);
       return $result;
@@ -208,7 +219,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     if ($response->getStatusCode() == '200') {
       $responseData = json_decode($response->getBody(), TRUE);
       if ($responseData['MessageDescription'] === "SUCCESS") {
-        \Drupal::logger('bw2_api')->notice('User successfully created on bw2');
+        $this->logger->notice('User successfully created on bw2');
         $result = json_decode($responseData['Result'], TRUE);
         return $result['ItemID'];
       }
@@ -234,7 +245,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     if ($response->getStatusCode() == '200') {
       $responseData = json_decode($response->getBody(), TRUE);
       if ($responseData['MessageDescription'] === "SUCCESS") {
-        \Drupal::logger('bw2_api')->notice('User successfully updated on bw2');
+        $this->logger->notice('User successfully updated on bw2');
         return ($createIfNotExists) ? $contact_id : TRUE;
       }
     }
@@ -324,11 +335,11 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
 
     }
     if ($dimension_code) {
-      foreach ($codes['DataList'] as $key => $lang) {
+      foreach ($codes['DataList'] as $lang) {
         if ($lang['Dimension_Code'] === $dimension_code) {
           $code = $lang['Dimension_ID'];
           break;
-  
+
         }
       }
     }
@@ -346,6 +357,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
         if ($country['Dimension_Code'] === $dimension_code) {
           $code = $country['Dimension_ID'];
           break;
+
         }
       }
     }
@@ -354,7 +366,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
 
   /**
    * Helper function to check if user exist in bw2.
-   * 
+   *
    * We use the current_item_version to retrieve 
    * only the newly created users.
    */
