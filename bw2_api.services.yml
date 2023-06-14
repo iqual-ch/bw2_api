@@ -1,4 +1,4 @@
 services:
   bw2_api:
-    class: Drupal\bw2_api\bw2ApiService
+    class: Drupal\bw2_api\Bw2ApiService
     arguments: ['@entity_type.manager', '@config.factory', '@request_stack']

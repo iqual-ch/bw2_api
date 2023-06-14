@@ -2,7 +2,8 @@
 
 Adds integration for the bw2.
 
-This is an API module only. Following modules use this to provide further functionality:
+This is an API module only. Following modules use this 
+to provide further functionality:
 
 * IQ Group bw2: Subscribe/Unsubscribe to newsletter.
 
