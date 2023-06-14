@@ -4,7 +4,7 @@ namespace Drupal\bw2_api;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Logger\LoggerChannelInterface;
+use Drupal\Core\Logger\LoggerChannelFactory;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -367,7 +367,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
   /**
    * Helper function to check if user exist in bw2.
    *
-   * We use the current_item_version to retrieve 
+   * We use the current_item_version to retrieve
    * only the newly created users.
    */
   public function userExists($email) {
