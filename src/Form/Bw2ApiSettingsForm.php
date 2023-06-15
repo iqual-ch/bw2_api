@@ -2,16 +2,14 @@
 
 namespace Drupal\bw2_api\Form;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provide the settings form for entity clone.
  */
-class bw2ApiSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
+class Bw2ApiSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
 
   /**
    * {@inheritdoc}
