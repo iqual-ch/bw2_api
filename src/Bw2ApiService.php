@@ -5,7 +5,7 @@ namespace Drupal\bw2_api;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Http\ClientFactory;
-use Drupal\Core\Logger\LoggerChannelFactory;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -68,7 +68,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
    *   The config factory.
    * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
    *   The current request stack.
-   * @param \Drupal\Core\Logger\LoggerChannelFactory $loggerChannelFactory
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerChannelFactory
    *   The logger channel factory.
    */
   public function __construct(
@@ -76,7 +76,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     EntityTypeManagerInterface $entity_type_manager,
     ConfigFactoryInterface $config_factory,
     RequestStack $request_stack,
-    LoggerChannelFactory $loggerChannelFactory
+    LoggerChannelFactoryInterface $loggerChannelFactory
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->request = $request_stack->getCurrentRequest();

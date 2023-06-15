@@ -29,7 +29,7 @@ class Bw2ApiServiceTest extends KernelTestBase {
   /**
    * The bw2_api.
    *
-   * @var \Drupal\bw2_api\bw2ApiService
+   * @var \Drupal\bw2_api\Bw2ApiService
    */
   protected $bw2Api;
 
