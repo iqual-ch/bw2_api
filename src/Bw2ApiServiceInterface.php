@@ -57,6 +57,6 @@ interface Bw2ApiServiceInterface {
    * @return mixed
    *   The bw2 id if update was successfull or FALSE.
    */
-  public function editContact(int $contact_id, array $data, bool $createIfNotExists);
+  public function editContact(int $contact_id, array $data, bool $createIfNotExists = FALSE);
 
 }

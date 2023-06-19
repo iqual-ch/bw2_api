@@ -16,11 +16,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class Bw2ApiService implements Bw2ApiServiceInterface {
 
   /**
-   * The client factory to create the client with the configuration.
+   * An pre-configured Guzzle HTTP Client.
    *
-   * @var \Drupal\Core\Http\ClientFactory
+   * @var \GuzzleHttp\Client
    */
-  protected $httpClientFactory;
+  protected $client;
 
   /**
    * The entity type manager.
