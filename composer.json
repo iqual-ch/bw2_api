@@ -1,5 +1,9 @@
 {
-    "name": "iqual/bw2_api",
-    "description": "Provides integration with the bw2 api library.",
-    "type": "drupal-custom-module"
+  "name": "iqual/bw2_api",
+  "description": "Provides integration with the bw2 api library.",
+  "type": "drupal-custom-module",
+  "require": {
+    "php": "^8.1",
+    "drupal/core": "^9.5 || ^10"
+  }
 }
