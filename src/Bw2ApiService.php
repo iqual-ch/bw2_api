@@ -142,8 +142,8 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
 
     if ($response->getStatusCode() == '200') {
       $this->logger->notice('Users list retrieved from bw2');
-      $data = json_decode($response->getBody(), TRUE);
-      $result = json_decode($data['Result'], TRUE);
+      $data = json_decode($response->getBody(), TRUE, 512, JSON_THROW_ON_ERROR);
+      $result = json_decode((string) $data['Result'], TRUE, 512, JSON_THROW_ON_ERROR);
       return $result;
     }
     return FALSE;
@@ -165,8 +165,8 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     ]);
 
     if ($response->getStatusCode() == '200') {
-      $data = json_decode($response->getBody(), TRUE);
-      return json_decode($data['Result'], TRUE);
+      $data = json_decode($response->getBody(), TRUE, 512, JSON_THROW_ON_ERROR);
+      return json_decode((string) $data['Result'], TRUE, 512, JSON_THROW_ON_ERROR);
     }
     return FALSE;
   }
@@ -187,8 +187,8 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     ]);
 
     if ($response->getStatusCode() == '200') {
-      $data = json_decode($response->getBody(), TRUE);
-      return json_decode($data['Result'], TRUE);
+      $data = json_decode($response->getBody(), TRUE, 512, JSON_THROW_ON_ERROR);
+      return json_decode((string) $data['Result'], TRUE, 512, JSON_THROW_ON_ERROR);
     }
     return FALSE;
   }
@@ -218,10 +218,10 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     ]);
 
     if ($response->getStatusCode() == '200') {
-      $responseData = json_decode($response->getBody(), TRUE);
+      $responseData = json_decode($response->getBody(), TRUE, 512, JSON_THROW_ON_ERROR);
       if ($responseData['MessageDescription'] === "SUCCESS") {
         $this->logger->notice('User successfully created on bw2');
-        $result = json_decode($responseData['Result'], TRUE);
+        $result = json_decode((string) $responseData['Result'], TRUE, 512, JSON_THROW_ON_ERROR);
         return $result['ItemID'];
       }
     }
@@ -244,7 +244,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     ]);
 
     if ($response->getStatusCode() == '200') {
-      $responseData = json_decode($response->getBody(), TRUE);
+      $responseData = json_decode($response->getBody(), TRUE, 512, JSON_THROW_ON_ERROR);
       if ($responseData['MessageDescription'] === "SUCCESS") {
         $this->logger->notice('User successfully updated on bw2');
         return ($createIfNotExists) ? $contact_id : TRUE;
@@ -257,10 +257,11 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
    * Helper function to construct the json requests.
    */
   protected function getRequestJson($data, $requestOperation, $extra_param = FALSE) {
+    $requestArray = NULL;
     if ($requestOperation == 'getUsers') {
       $requestArray = [
         'Data' => [
-          'ItemVersion' => ($extra_param) ? $extra_param : '0',
+          'ItemVersion' => $extra_param ?: '0',
           'DataProviderCode' => 'GastData',
           'Password' => $this->getCredentials()['password'],
         ],
@@ -269,7 +270,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     elseif ($requestOperation == 'getCountries') {
       $requestArray = [
         'Data' => [
-          'ItemVersion' => ($extra_param) ? $extra_param : '0',
+          'ItemVersion' => $extra_param ?: '0',
           'DataProviderCode' => 'CountryData',
           'Password' => $this->getCredentials()['password'],
         ],
@@ -278,7 +279,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     elseif ($requestOperation == 'getLanguages') {
       $requestArray = [
         'Data' => [
-          'ItemVersion' => ($extra_param) ? $extra_param : '0',
+          'ItemVersion' => $extra_param ?: '0',
           'DataProviderCode' => 'LanguageData',
           'Password' => $this->getCredentials()['password'],
         ],
@@ -311,6 +312,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
    * Helper function to convert the user language to the correct bw2 ID.
    */
   public function getLanguageCode($langCode) {
+    $code = NULL;
     $codes = $this->getLanguageInformation();
     $dimension_code = NULL;
     switch ($langCode) {
@@ -351,6 +353,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
    * Helper function to convert the user country to the correct bw2 ID.
    */
   public function getCountryCode($countryCode) {
+    $code = NULL;
     $codes = $this->getCountryInformation();
     $dimension_code = $countryCode;
     if ($dimension_code) {

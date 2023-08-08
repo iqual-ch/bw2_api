@@ -36,7 +36,7 @@ class Bw2ApiServiceTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $this->installConfig([
       'bw2_api',
@@ -126,9 +126,9 @@ class Bw2ApiServiceTest extends KernelTestBase {
       'Account_POBox' => 'POBox',
       'Account_PostalCode' => '3007',
       'Account_City' => 'Bern',
-      'Account_Country_Dimension_ID' => -2147483512,
-      'Account_Email1' => 'unit.tester_' . rand() . '@drupal.ch',
-      'Account_Language_Dimension_ID' => -2147301090,
+      'Account_Country_Dimension_ID' => -2_147_483_512,
+      'Account_Email1' => 'unit.tester_' . random_int(0, mt_getrandmax()) . '@drupal.ch',
+      'Account_Language_Dimension_ID' => -2_147_301_090,
       'Visitor_AllowEmail' => FALSE,
       'Account_Birthday' => '2000-01-01',
     ];
@@ -148,9 +148,9 @@ class Bw2ApiServiceTest extends KernelTestBase {
       'Account_POBox' => 'POBox',
       'Account_PostalCode' => '3007',
       'Account_City' => 'Bern',
-      'Account_Country_Dimension_ID' => -2147483512,
+      'Account_Country_Dimension_ID' => -2_147_483_512,
       'Account_Email1' => 'unit.tester@drupal.ch',
-      'Account_Language_Dimension_ID' => -2147301090,
+      'Account_Language_Dimension_ID' => -2_147_301_090,
       'Visitor_AllowEmail' => FALSE,
       'Account_Birthday' => '2000-01-01',
     ];
