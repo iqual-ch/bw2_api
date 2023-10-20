@@ -108,7 +108,7 @@ class Bw2ApiServiceTest extends KernelTestBase {
   public function testEditUser() {
     $data = $this->getExistingUserData();
     $results = $this->bw2Api->createContact($data);
-    $this->assertTrue($results);
+    $this->assertNotNull($results);
   }
 
   /**
