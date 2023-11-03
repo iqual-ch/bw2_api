@@ -2,6 +2,7 @@
 
 namespace Drupal\bw2_api;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Http\ClientFactory;
@@ -142,8 +143,8 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
 
     if ($response->getStatusCode() == '200') {
       $this->logger->notice('Users list retrieved from bw2');
-      $data = json_decode($response->getBody(), TRUE, 512, JSON_THROW_ON_ERROR);
-      $result = json_decode((string) $data['Result'], TRUE, 512, JSON_THROW_ON_ERROR);
+      $data = Json::decode($response->getBody());
+      $result = Json::decode((string) $data['Result']);
       return $result;
     }
     return FALSE;
@@ -165,8 +166,8 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     ]);
 
     if ($response->getStatusCode() == '200') {
-      $data = json_decode($response->getBody(), TRUE, 512, JSON_THROW_ON_ERROR);
-      return json_decode((string) $data['Result'], TRUE, 512, JSON_THROW_ON_ERROR);
+      $data = Json::decode($response->getBody());
+      return Json::decode((string) $data['Result']);
     }
     return FALSE;
   }
@@ -187,8 +188,8 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     ]);
 
     if ($response->getStatusCode() == '200') {
-      $data = json_decode($response->getBody(), TRUE, 512, JSON_THROW_ON_ERROR);
-      return json_decode((string) $data['Result'], TRUE, 512, JSON_THROW_ON_ERROR);
+      $data = Json::decode($response->getBody());
+      return Json::decode((string) $data['Result']);
     }
     return FALSE;
   }
@@ -218,10 +219,10 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     ]);
 
     if ($response->getStatusCode() == '200') {
-      $responseData = json_decode($response->getBody(), TRUE, 512, JSON_THROW_ON_ERROR);
+      $responseData = Json::decode($response->getBody());
       if ($responseData['MessageDescription'] === "SUCCESS") {
         $this->logger->notice('User successfully created on bw2');
-        $result = json_decode((string) $responseData['Result'], TRUE, 512, JSON_THROW_ON_ERROR);
+        $result = Json::decode((string) $responseData['Result']);
         return $result['ItemID'];
       }
     }
@@ -244,7 +245,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
     ]);
 
     if ($response->getStatusCode() == '200') {
-      $responseData = json_decode($response->getBody(), TRUE, 512, JSON_THROW_ON_ERROR);
+      $responseData = Json::decode($response->getBody());
       if ($responseData['MessageDescription'] === "SUCCESS") {
         $this->logger->notice('User successfully updated on bw2');
         return ($createIfNotExists) ? $contact_id : TRUE;
@@ -304,7 +305,7 @@ class Bw2ApiService implements Bw2ApiServiceInterface {
         ],
       ];
     }
-    $request_json = json_encode($requestArray, TRUE);
+    $request_json = Json::encode($requestArray);
     return $request_json;
   }
 
