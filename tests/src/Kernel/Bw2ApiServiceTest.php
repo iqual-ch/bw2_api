@@ -38,7 +38,7 @@ class Bw2ApiServiceTest extends KernelTestBase implements ServiceModifierInterfa
 
   private const GET_CONTACTS_RESPONSE = '{"MessageCode":"0","MessageDescription":"SUCCESS","Result":"{\"MaxItemVersion\":2139857,\"DataList\":[{\"Account_ID\":-2144271219,\"Account_Salutation\":\"\",\"Account_Active\":true,\"Account_LastName\":\"Bern Test ARC4\",\"Account_FirstName\":\"\",\"Account_AddressLine1\":\"OfficeTest ARC4\",\"Account_Street\":\"\",\"Account_POBox\":\"\",\"Account_PostalCode\":\"\",\"Account_City\":\"\",\"Account_Email1\":\"empty@empty.com\",\"Account_Country_Dimension_ID\":-2147483512,\"Account_Country_Dimension_Code\":\"CH\",\"Account_Country_Dimension_Name\":\"Schweiz\",\"Account_Language_Dimension_ID\":-2147301090,\"Account_Language_Dimension_Code\":\"D\",\"Account_Language_Dimension_Name\":\"German\",\"Account_Gender_Dimension_ID\":0,\"Account_Gender_Dimension_Code\":\"\",\"Account_Gender_Dimension_Name\":\"\",\"Visitor_AllowEmail\":false,\"Account_Birthday\":\"2003-09-01T00:00:00Z\"}]}"}';
 
-  private const GET_CONTACTS_EXISTING_USER_RESPONSE = '{"MessageCode":"0","MessageDescription":"SUCCESS","Result":"{\"MaxItemVersion\":2139857,\"DataList\":[{\"Account_ID\":-2144271219,\"Account_Salutation\":\"\",\"Account_Active\":true,\"Account_LastName\":\"Bern Test ARC4\",\"Account_FirstName\":\"\",\"Account_AddressLine1\":\"OfficeTest ARC4\",\"Account_Street\":\"\",\"Account_POBox\":\"\",\"Account_PostalCode\":\"\",\"Account_City\":\"\",\"Account_Email1\":\"unit.tester@drupal.ch\",\"Account_Country_Dimension_ID\":-2147483512,\"Account_Country_Dimension_Code\":\"CH\",\"Account_Country_Dimension_Name\":\"Schweiz\",\"Account_Language_Dimension_ID\":-2147301090,\"Account_Language_Dimension_Code\":\"D\",\"Account_Language_Dimension_Name\":\"German\",\"Account_Gender_Dimension_ID\":0,\"Account_Gender_Dimension_Code\":\"\",\"Account_Gender_Dimension_Name\":\"\",\"Visitor_AllowEmail\":false,\"Account_Birthday\":\"2003-09-01T00:00:00Z\"}]}"}';
+  private const GET_CONTACTS_EXISTING_USER_RESPONSE = '{"MessageCode":"0","MessageDescription":"SUCCESS","Result":"{\"MaxItemVersion\":2139857,\"DataList\":[{\"Account_ID\":-2144271219,\"Account_Salutation\":\"\",\"Account_Active\":true,\"Account_LastName\":\"Bern Test ARC4\",\"Account_FirstName\":\"\",\"Account_AddressLine1\":\"OfficeTest ARC4\",\"Account_Street\":\"\",\"Account_POBox\":\"\",\"Account_PostalCode\":\"\",\"Account_City\":\"\",\"Account_Email1\":\"unit.tester@example.ch\",\"Account_Country_Dimension_ID\":-2147483512,\"Account_Country_Dimension_Code\":\"CH\",\"Account_Country_Dimension_Name\":\"Schweiz\",\"Account_Language_Dimension_ID\":-2147301090,\"Account_Language_Dimension_Code\":\"D\",\"Account_Language_Dimension_Name\":\"German\",\"Account_Gender_Dimension_ID\":0,\"Account_Gender_Dimension_Code\":\"\",\"Account_Gender_Dimension_Name\":\"\",\"Visitor_AllowEmail\":false,\"Account_Birthday\":\"2003-09-01T00:00:00Z\"}]}"}';
 
   private const EDIT_USER_RESPONSE = '{"MessageCode":"0","MessageDescription":"SUCCESS","Result":"{\"MessageCode\":\"0\",\"MessageDescription\":\"SUCCESS\",\"ItemGuid\":\"6b80034a-4e5d-47d7-ae4a-6055e6d242bd\",\"ItemID\":-2144268961}"}';
 
@@ -232,14 +232,14 @@ class Bw2ApiServiceTest extends KernelTestBase implements ServiceModifierInterfa
       'Account_Active' => TRUE,
       'Account_Salutation' => 'Herr',
       'Account_FirstName' => 'Unit Tester',
-      'Account_LastName' => 'Drupal',
+      'Account_LastName' => 'Example',
       'Account_AddressLine1' => 'address_line1',
       'Account_Street' => 'address_line2',
       'Account_POBox' => 'POBox',
       'Account_PostalCode' => '3007',
       'Account_City' => 'Bern',
       'Account_Country_Dimension_ID' => -2_147_483_512,
-      'Account_Email1' => 'unit.tester_' . random_int(0, mt_getrandmax()) . '@drupal.ch',
+      'Account_Email1' => 'unit.tester_' . random_int(0, mt_getrandmax()) . '@example.ch',
       'Account_Language_Dimension_ID' => -2_147_301_090,
       'Visitor_AllowEmail' => FALSE,
       'Account_Birthday' => '2000-01-01',
@@ -254,14 +254,14 @@ class Bw2ApiServiceTest extends KernelTestBase implements ServiceModifierInterfa
       'Account_Active' => TRUE,
       'Account_Salutation' => 'Herr',
       'Account_FirstName' => 'Unit Tester',
-      'Account_LastName' => 'Drupal',
+      'Account_LastName' => 'Example',
       'Account_AddressLine1' => 'address_line1',
       'Account_Street' => 'address_line2',
       'Account_POBox' => 'POBox',
       'Account_PostalCode' => '3007',
       'Account_City' => 'Bern',
       'Account_Country_Dimension_ID' => -2_147_483_512,
-      'Account_Email1' => 'unit.tester@drupal.ch',
+      'Account_Email1' => 'unit.tester@example.ch',
       'Account_Language_Dimension_ID' => -2_147_301_090,
       'Visitor_AllowEmail' => FALSE,
       'Account_Birthday' => '2000-01-01',
